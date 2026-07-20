@@ -1,0 +1,386 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Register Grievance | Namakkal PGR Admin{% endblock %}
+
+{% block extra_css %}
+<!-- Leaflet Map CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    /* Styling similar to citizen registration page but unified with dashboard cards */
+    .form-section-title {
+        border-bottom: 2px solid var(--border-color);
+        padding-bottom: 8px;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4 g-3">
+    <div class="col-md-8">
+        <h3 class="fw-bold text-primary m-0">Register Complaint</h3>
+        <span class="text-muted small">Register a new complaint. All fields marked * are mandatory.</span>
+    </div>
+</div>
+
+<div class="card dashboard-card">
+    <div class="card-body p-4 p-md-5">
+        <form method="post" enctype="multipart/form-data" id="adminComplaintForm" class="needs-validation" novalidate>
+            {% csrf_token %}
+            
+            <!-- Section 1: Citizen Details -->
+            <div class="mb-5">
+                <h5 class="form-section-title"><i class="fa-solid fa-user me-2"></i> 1. Citizen Details</h5>
+                <div class="row g-3">
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-bold text-secondary">Mobile Number *</label>
+                        <div class="d-flex gap-2">
+                            <input type="text" name="mobile_number" id="id_mobile_number" class="form-control" placeholder="e.g. 9876543210" required pattern="[0-9]{10}">
+                        </div>
+                        <div class="form-text text-muted">10-digit mobile number</div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-bold text-secondary">Full Name *</label>
+                        {{ form.citizen_name }}
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-bold text-secondary">Gender</label>
+                        {{ form.gender }}
+                    </div>
+                    <div class="col-md-6 d-none d-md-block"></div>
+                    <div class="col-12">
+                        <label class="form-label fw-bold text-secondary">Street Address *</label>
+                        {{ form.street_address }}
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-bold text-secondary">PIN Code</label>
+                        {{ form.pincode }}
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-bold text-secondary">Email Address</label>
+                        {{ form.email }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Location Details -->
+            <div class="mb-5">
+                <h5 class="form-section-title"><i class="fa-solid fa-map-location-dot me-2"></i> 2. Complaint Location</h5>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-bold text-secondary">Zone *</label>
+                        <select name="zone" id="id_zone" class="form-select" required>
+                            <option value="">-- Choose Zone --</option>
+                            {% for zone in zones %}
+                                <option value="{{ zone.id }}">{{ zone.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-bold text-secondary">Ward Number *</label>
+                        <select name="ward" id="id_ward" class="form-select" required disabled>
+                            <option value="">-- Choose Ward --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-bold text-secondary">Area / Locality *</label>
+                        <select name="area" id="id_area" class="form-select" required disabled>
+                            <option value="">-- Choose Area --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-bold text-secondary">Street Name & Landmark *</label>
+                        {{ form.street }}
+                    </div>
+                </div>
+
+                <!-- OR Divider -->
+                <div class="text-center my-3 d-flex align-items-center justify-content-center">
+                    <hr class="flex-grow-1">
+                    <span class="badge bg-secondary text-white rounded-circle p-2 mx-3">OR</span>
+                    <hr class="flex-grow-1">
+                </div>
+
+                <!-- Location status and Map -->
+                <div class="text-center mb-3">
+                    <button type="button" class="btn btn-outline-primary px-4 py-2" id="currentLocationBtn">📍 Pinned Location from Device Coordinates</button>
+                    <div class="mt-2 text-muted small" id="locationStatus">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i> No location pinned
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div id="admin-map" class="border rounded" style="height: 320px;"></div>
+                        {{ form.latitude }}
+                        {{ form.longitude }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Grievance Details -->
+            <div class="mb-5">
+                <h5 class="form-section-title"><i class="fa-solid fa-circle-info me-2"></i> 3. Grievance Details</h5>
+                <div class="row g-3">
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-bold text-secondary">Complaint Category *</label>
+                        {{ form.category }}
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-bold text-secondary">Complaint Type (Sub-category) *</label>
+                        {{ form.complaint_type }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-bold text-secondary">Social Media Link (Optional)</label>
+                        {{ form.social_media_link }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-bold text-secondary">Complaint Description *</label>
+                        {{ form.description }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Attachments -->
+            <div class="mb-5">
+                <h5 class="form-section-title"><i class="fa-solid fa-paperclip me-2"></i> 4. Upload Photograph / Video (optional)</h5>
+                
+                <div class="border border-2 border-dashed border-primary rounded-3 p-5 text-center bg-light cursor-pointer" id="dropzone" style="border-style: dashed !important; border-width: 2px !important; border-color: #2563eb !important;">
+                    <div class="py-3" id="dropzone-prompt">
+                        <i class="fa-solid fa-cloud-arrow-up fs-1 text-primary mb-3"></i>
+                        <h5 class="fw-bold text-dark mb-1">📷 Click or drag & drop to add photos / videos</h5>
+                        <p class="text-muted small mb-0">(JPG, PNG, MP4 — max 5 MB each)</p>
+                        <div class="mt-3 d-none" id="uploadedFilesBadge">
+                            <span class="badge bg-success p-2 fs-6" id="uploadStatusText">File selected</span>
+                        </div>
+                    </div>
+                    <div id="dropzone-previews" class="row g-3 justify-content-center d-none">
+                        <!-- Previews container -->
+                    </div>
+                </div>
+                
+                <!-- Hidden inputs managed by JS -->
+                <div class="d-none">
+                    <input type="file" id="masterFileInput" accept="image/*,video/*">
+                    {{ form.image }}
+                    {{ form.video_upload }}
+                </div>
+            </div>
+
+            <!-- Captcha Code verification for Admin submit safety -->
+            <div class="bg-light border rounded p-4 mb-4">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-4 col-12">
+                        <div class="bg-dark text-warning text-center rounded py-2 fs-5 fw-bold tracking-widest">{{ captcha_code }}</div>
+                    </div>
+                    <div class="col-md-4 col-12">
+                        {{ form.captcha }}
+                    </div>
+                    <div class="col-md-4 col-12">
+                        <button type="submit" class="btn btn-gov btn-primary w-100 py-2 fw-bold" id="submitBtn"><i class="fa-solid fa-check-double me-2"></i> Register Grievance</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Leaflet Map JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+$(document).ready(function() {
+    let map, marker;
+    let initialLat = 11.2189;
+    let initialLng = 78.1674;
+
+    function initMap(lat, lng) {
+        if (map) return;
+        map = L.map('admin-map').setView([lat, lng], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        marker = L.marker([lat, lng], {draggable: true}).addTo(map);
+        updateLatLng(lat, lng);
+
+        marker.on('dragend', function(e) {
+            let position = marker.getLatLng();
+            updateLatLng(position.lat, position.lng);
+        });
+
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+            updateLatLng(e.latlng.lat, e.latlng.lng);
+        });
+    }
+
+    function updateLatLng(lat, lng) {
+        $('#id_latitude').val(lat.toFixed(7));
+        $('#id_longitude').val(lng.toFixed(7));
+        $('#locationStatus').html('<span class="badge bg-success text-white px-3 py-2"><i class="fa-solid fa-circle-check me-1"></i> Location Pinned: ' + lat.toFixed(5) + ', ' + lng.toFixed(5) + '</span>');
+    }
+
+    initMap(initialLat, initialLng);
+
+    // Geolocation trigger
+    $('#currentLocationBtn').click(function() {
+        if (navigator.geolocation) {
+            $(this).text("Fetching Coordinates...");
+            navigator.geolocation.getCurrentPosition(function(pos) {
+                let lat = pos.coords.latitude;
+                let lng = pos.coords.longitude;
+                marker.setLatLng([lat, lng]);
+                map.setView([lat, lng], 15);
+                updateLatLng(lat, lng);
+                $('#currentLocationBtn').text("📍 Pinned Location from Device Coordinates");
+            }, function(err) {
+                Swal.fire('Error', 'Unable to fetch coordinates.', 'error');
+                $('#currentLocationBtn').text("📍 Pinned Location from Device Coordinates");
+            });
+        }
+    });
+
+    // Dynamic Zone/Ward/Area dropdowns
+    $('#id_zone').change(function() {
+        let zoneId = $(this).val();
+        let wardSelect = $('#id_ward');
+        let areaSelect = $('#id_area');
+        
+        wardSelect.empty().append('<option value="">-- Choose Ward --</option>').prop('disabled', true);
+        areaSelect.empty().append('<option value="">-- Choose Area --</option>').prop('disabled', true);
+
+        if (zoneId) {
+            $.get("{% url 'get_wards_areas' %}", { zone_id: zoneId }, function(data) {
+                if (data.wards.length > 0) {
+                    $.each(data.wards, function(idx, w) {
+                        wardSelect.append(`<option value="${w.id}">Ward ${w.number} (${w.name})</option>`);
+                    });
+                    wardSelect.prop('disabled', false);
+                }
+            });
+        }
+    });
+
+    $('#id_ward').change(function() {
+        let wardId = $(this).val();
+        let areaSelect = $('#id_area');
+        
+        areaSelect.empty().append('<option value="">-- Choose Area --</option>').prop('disabled', true);
+
+        if (wardId) {
+            $.get("{% url 'get_wards_areas' %}", { ward_id: wardId }, function(data) {
+                if (data.areas.length > 0) {
+                    $.each(data.areas, function(idx, a) {
+                        areaSelect.append(`<option value="${a.id}">${a.name}</option>`);
+                    });
+                    areaSelect.prop('disabled', false);
+                }
+            });
+        }
+    });
+
+    const originalPromptHtml = $('#dropzone-prompt').html();
+
+    // Dropzone Click Trigger
+    $('#dropzone').click(function(e) {
+        if ($(e.target).closest('#dropzone-previews').length === 0) {
+            $('#masterFileInput').click();
+        }
+    });
+
+    // File Input Selection
+    $('#masterFileInput').change(function(e) {
+        if (e.target.files.length > 0) {
+            handleFileSelect(e.target.files[0]);
+        }
+    });
+
+    // Drag and Drop events
+    let dropzoneEl = document.getElementById('dropzone');
+    dropzoneEl.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        $('#dropzone').addClass('bg-secondary-subtle');
+    });
+
+    dropzoneEl.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        $('#dropzone').removeClass('bg-secondary-subtle');
+    });
+
+    dropzoneEl.addEventListener('drop', function(e) {
+        e.preventDefault();
+        $('#dropzone').removeClass('bg-secondary-subtle');
+        if (e.dataTransfer.files.length > 0) {
+            handleFileSelect(e.dataTransfer.files[0]);
+        }
+    });
+
+    function handleFileSelect(file) {
+        let isImage = file.type.startsWith('image/');
+        let isVideo = file.type.startsWith('video/');
+
+        if (!isImage && !isVideo) {
+            Swal.fire('Invalid File', 'Please select an image or video file.', 'error');
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            Swal.fire('File Too Large', 'Maximum allowed file size is 5 MB.', 'error');
+            return;
+        }
+
+        let dt = new DataTransfer();
+        dt.items.add(file);
+
+        if (isImage) {
+            document.getElementById('id_image').files = dt.files;
+            document.getElementById('id_video_upload').value = '';
+            
+            let imageUrl = URL.createObjectURL(file);
+            $('#dropzone').css({
+                'background-image': `url(${imageUrl})`,
+                'background-size': 'cover',
+                'background-position': 'center',
+                'background-repeat': 'no-repeat',
+                'min-height': '240px'
+            });
+            $('#dropzone-prompt').html(`
+                <div class="py-2 px-3 rounded shadow" style="background: rgba(30, 74, 138, 0.85); color: #ffffff; display: inline-block; font-weight: bold; border: 1px solid rgba(255,255,255,0.2);">
+                    <i class="fa-solid fa-arrows-rotate me-2"></i> Click or drop to replace photo
+                </div>
+            `).removeClass('d-none');
+            $('#dropzone-previews').addClass('d-none');
+        } else {
+            document.getElementById('id_video_upload').files = dt.files;
+            document.getElementById('id_image').value = '';
+            
+            let fileUrl = URL.createObjectURL(file);
+            $('#dropzone').css({
+                'background-image': 'none',
+                'min-height': 'auto'
+            });
+            $('#dropzone-prompt').html(originalPromptHtml).addClass('d-none');
+            
+            let previewHtml = `
+                <div class="col-md-4 col-sm-6 col-12">
+                    <div class="card p-3 border-amber-soft text-center bg-white">
+                        <div class="mb-2">
+                            <video src="${fileUrl}" class="img-fluid rounded mb-2" style="max-height: 100px; object-fit: cover; border: 1px solid #e2e8f0;" controls></video>
+                        </div>
+                        <div class="text-truncate small fw-bold">${file.name}</div>
+                        <div class="small text-muted">${(file.size / (1024 * 1024)).toFixed(2)} MB</div>
+                    </div>
+                </div>`;
+            $('#dropzone-previews').html(previewHtml).removeClass('d-none');
+        }
+    }
+});
+</script>
+{% endblock %}

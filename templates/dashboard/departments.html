@@ -1,0 +1,271 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Details Management | Namakkal PGR Admin{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4 g-3">
+    <div class="col-md-7">
+        <h3 class="fw-bold text-primary m-0">Details Management</h3>
+        <span class="text-muted small">Manage complaint categories and departments</span>
+    </div>
+    <div class="col-md-5 text-md-end">
+        <div class="d-flex justify-content-md-end gap-2">
+            <button class="btn btn-primary btn-sm" id="btnAddCategory"><i class="fa-solid fa-plus me-1"></i> Add Category</button>
+            <button class="btn btn-secondary btn-sm" id="btnAddDepartment"><i class="fa-solid fa-folder-plus me-1"></i> Add Department</button>
+        </div>
+    </div>
+</div>
+
+<!-- Details Grid Section -->
+<div class="card dashboard-card mb-4">
+    <div class="card-header bg-primary text-white py-3">
+        <h5 class="m-0 fw-bold"><i class="fa-solid fa-users me-2"></i> Category Members & Grievance Statistics</h5>
+    </div>
+    <div class="card-body p-4">
+        <div class="row g-3">
+            <!-- Other -->
+            <div class="col-md-4 col-sm-6 col-12">
+                <div class="card bg-light border-0 p-3 h-100 dashboard-card shadow-none">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-dark fs-5"><i class="fa-solid fa-tags text-primary me-2"></i> Other</span>
+                        <span class="badge bg-secondary rounded-pill">0 members</span>
+                    </div>
+                    <hr class="my-2">
+                    <div class="row text-center mt-2 small">
+                        <div class="col-4 border-end">
+                            <div class="text-muted">Total</div>
+                            <div class="fw-bold text-primary">8</div>
+                        </div>
+                        <div class="col-4 border-end">
+                            <div class="text-muted">Resolved</div>
+                            <div class="fw-bold text-success">3</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted">Unresolved</div>
+                            <div class="fw-bold text-danger">5</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Engineer -->
+            <div class="col-md-4 col-sm-6 col-12">
+                <div class="card bg-light border-0 p-3 h-100 dashboard-card shadow-none">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-dark fs-5"><i class="fa-solid fa-helmet-safety text-primary me-2"></i> Engineer</span>
+                        <span class="badge bg-secondary rounded-pill">85 members</span>
+                    </div>
+                    <hr class="my-2">
+                    <div class="row text-center mt-2 small">
+                        <div class="col-4 border-end">
+                            <div class="text-muted">Total</div>
+                            <div class="fw-bold text-primary">0</div>
+                        </div>
+                        <div class="col-4 border-end">
+                            <div class="text-muted">Resolved</div>
+                            <div class="fw-bold text-success">0</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted">Unresolved</div>
+                            <div class="fw-bold text-danger">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- General -->
+            <div class="col-md-4 col-sm-6 col-12">
+                <div class="card bg-light border-0 p-3 h-100 dashboard-card shadow-none">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-dark fs-5"><i class="fa-solid fa-briefcase text-primary me-2"></i> General</span>
+                        <span class="badge bg-secondary rounded-pill">37 members</span>
+                    </div>
+                    <hr class="my-2">
+                    <div class="row text-center mt-2 small">
+                        <div class="col-4 border-end">
+                            <div class="text-muted">Total</div>
+                            <div class="fw-bold text-primary">0</div>
+                        </div>
+                        <div class="col-4 border-end">
+                            <div class="text-muted">Resolved</div>
+                            <div class="fw-bold text-success">0</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted">Unresolved</div>
+                            <div class="fw-bold text-danger">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Public Health -->
+            <div class="col-md-4 col-sm-6 col-12">
+                <div class="card bg-light border-0 p-3 h-100 dashboard-card shadow-none">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-dark fs-5"><i class="fa-solid fa-heart-pulse text-primary me-2"></i> Public Health</span>
+                        <span class="badge bg-secondary rounded-pill">53 members</span>
+                    </div>
+                    <hr class="my-2">
+                    <div class="row text-center mt-2 small">
+                        <div class="col-4 border-end">
+                            <div class="text-muted">Total</div>
+                            <div class="fw-bold text-primary">0</div>
+                        </div>
+                        <div class="col-4 border-end">
+                            <div class="text-muted">Resolved</div>
+                            <div class="fw-bold text-success">0</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted">Unresolved</div>
+                            <div class="fw-bold text-danger">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue -->
+            <div class="col-md-4 col-sm-6 col-12">
+                <div class="card bg-light border-0 p-3 h-100 dashboard-card shadow-none">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-dark fs-5"><i class="fa-solid fa-indian-rupee-sign text-primary me-2"></i> Revenue</span>
+                        <span class="badge bg-secondary rounded-pill">22 members</span>
+                    </div>
+                    <hr class="my-2">
+                    <div class="row text-center mt-2 small">
+                        <div class="col-4 border-end">
+                            <div class="text-muted">Total</div>
+                            <div class="fw-bold text-primary">0</div>
+                        </div>
+                        <div class="col-4 border-end">
+                            <div class="text-muted">Resolved</div>
+                            <div class="fw-bold text-success">0</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted">Unresolved</div>
+                            <div class="fw-bold text-danger">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Town Planning -->
+            <div class="col-md-4 col-sm-6 col-12">
+                <div class="card bg-light border-0 p-3 h-100 dashboard-card shadow-none">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-dark fs-5"><i class="fa-solid fa-map text-primary me-2"></i> Town Planning</span>
+                        <span class="badge bg-secondary rounded-pill">3 members</span>
+                    </div>
+                    <hr class="my-2">
+                    <div class="row text-center mt-2 small">
+                        <div class="col-4 border-end">
+                            <div class="text-muted">Total</div>
+                            <div class="fw-bold text-primary">0</div>
+                        </div>
+                        <div class="col-4 border-end">
+                            <div class="text-muted">Resolved</div>
+                            <div class="fw-bold text-success">0</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted">Unresolved</div>
+                            <div class="fw-bold text-danger">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Active Utility Departments Section -->
+<div class="card dashboard-card">
+    <div class="card-header bg-secondary text-white py-3">
+        <h5 class="m-0 fw-bold"><i class="fa-solid fa-sitemap me-2"></i> Active Utility Departments</h5>
+    </div>
+    <div class="card-body p-4">
+        <div class="row g-3">
+            <!-- Road Department -->
+            <div class="col-md-4 col-sm-6 col-12">
+                <div class="card bg-light border-0 p-3 h-100 dashboard-card shadow-none">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-dark"><i class="fa-solid fa-road text-primary me-2"></i> Roads & Works</span>
+                        <span class="badge bg-primary rounded-pill">12 Officers</span>
+                    </div>
+                    <div class="row text-center mt-2 small">
+                        <div class="col-4 border-end">
+                            <div class="text-muted">Total</div>
+                            <div class="fw-bold text-primary">45</div>
+                        </div>
+                        <div class="col-4 border-end">
+                            <div class="text-muted">Pending</div>
+                            <div class="fw-bold text-warning">18</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted">Resolved</div>
+                            <div class="fw-bold text-success">27</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Water Supply -->
+            <div class="col-md-4 col-sm-6 col-12">
+                <div class="card bg-light border-0 p-3 h-100 dashboard-card shadow-none">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-dark"><i class="fa-solid fa-droplet text-info me-2"></i> Water Supply</span>
+                        <span class="badge bg-primary rounded-pill">8 Officers</span>
+                    </div>
+                    <div class="row text-center mt-2 small">
+                        <div class="col-4 border-end">
+                            <div class="text-muted">Total</div>
+                            <div class="fw-bold text-primary">32</div>
+                        </div>
+                        <div class="col-4 border-end">
+                            <div class="text-muted">Pending</div>
+                            <div class="fw-bold text-warning">10</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted">Resolved</div>
+                            <div class="fw-bold text-success">22</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('#btnAddCategory').click(function() {
+            Swal.fire({
+                title: 'Add New Category',
+                input: 'text',
+                inputPlaceholder: 'e.g. Drainage Maintenance',
+                showCancelButton: true,
+                confirmButtonText: 'Add Category'
+            }).then((res) => {
+                if (res.isConfirmed && res.value) {
+                    Swal.fire('Category Added', `Category "${res.value}" registered successfully.`, 'success');
+                }
+            });
+        });
+
+        $('#btnAddDepartment').click(function() {
+            Swal.fire({
+                title: 'Add New Department',
+                input: 'text',
+                inputPlaceholder: 'e.g. Engineering Department',
+                showCancelButton: true,
+                confirmButtonText: 'Add Department'
+            }).then((res) => {
+                if (res.isConfirmed && res.value) {
+                    Swal.fire('Department Added', `Department "${res.value}" registered successfully.`, 'success');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us | Namakkal PGR{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <!-- Contact Info Card -->
+    <div class="col-lg-5">
+        <div class="card shadow-sm border-0 h-100 p-4">
+            <h3 class="fw-bold text-primary mb-4"><i class="fa-solid fa-address-card me-2"></i> Corporation Office</h3>
+            
+            <div class="mb-4">
+                <h5 class="fw-bold text-secondary mb-1">Commissioner</h5>
+                <p class="text-muted m-0">Namakkal City Municipal Corporation</p>
+                <p class="text-muted m-0">Namakkal, Tamil Nadu, India.</p>
+            </div>
+
+            <div class="mb-3 d-flex align-items-start">
+                <div class="text-primary me-3 mt-1"><i class="fa-solid fa-phone fa-lg"></i></div>
+                <div>
+                    <h6 class="fw-bold m-0">Helpline Phone</h6>
+                    <p class="text-muted m-0"><a href="tel:06286-221777" class="text-decoration-none">06286-221777</a></p>
+                </div>
+            </div>
+
+            <div class="mb-3 d-flex align-items-start">
+                <div class="text-primary me-3 mt-1"><i class="fa-solid fa-envelope fa-lg"></i></div>
+                <div>
+                    <h6 class="fw-bold m-0">Official Email</h6>
+                    <p class="text-muted m-0"><a href="mailto:commr.namakkal@tn.gov.in" class="text-decoration-none">commr.namakkal@tn.gov.in</a></p>
+                </div>
+            </div>
+
+            <div class="mb-3 d-flex align-items-start">
+                <div class="text-primary me-3 mt-1"><i class="fa-solid fa-clock fa-lg"></i></div>
+                <div>
+                    <h6 class="fw-bold m-0">Office Hours</h6>
+                    <p class="text-muted m-0">Monday - Friday: 10:00 AM to 5:45 PM</p>
+                    <p class="text-muted m-0">Closed on Saturdays, Sundays and Public Holidays</p>
+                </div>
+            </div>
+
+            <div class="mb-3 d-flex align-items-start">
+                <div class="text-primary me-3 mt-1"><i class="fa-solid fa-globe fa-lg"></i></div>
+                <div>
+                    <h6 class="fw-bold m-0">Official Web Portal</h6>
+                    <p class="text-muted m-0"><a href="https://tnurbanlocalbodies.tn.gov.in" target="_blank" class="text-decoration-none">tnurbanlocalbodies.tn.gov.in</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet Location Map -->
+    <div class="col-lg-7">
+        <div class="card shadow-sm border-0 h-100 p-4">
+            <h3 class="fw-bold text-primary mb-3"><i class="fa-solid fa-map-location-dot me-2"></i> Corporation Office Location</h3>
+            <p class="text-muted">Interactive map highlighting the Namakkal City Municipal Corporation Main Office headquarters.</p>
+            <div id="office-map" style="height: 350px; border-radius: 8px; border: 2px solid #e2e8f0;"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    let officeLat = 11.2223405;
+    let officeLng = 78.1648083;
+    
+    let map = L.map('office-map').setView([officeLat, officeLng], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.marker([officeLat, officeLng]).addTo(map)
+        .bindPopup("<b>Namakkal City Municipal Corporation Office</b><br>Main HQ Headquarters.")
+        .openPopup();
+});
+</script>
+{% endblock %}

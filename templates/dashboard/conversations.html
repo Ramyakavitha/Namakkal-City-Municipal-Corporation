@@ -1,0 +1,428 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}WhatsApp Web Console | Namakkal PGR Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .whatsapp-container {
+        height: calc(100vh - 120px);
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+    
+    .wa-sidebar {
+        border-right: 1px solid var(--border-color);
+        background-color: var(--card-bg);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .wa-sidebar-header {
+        background-color: #075e54; /* WhatsApp green */
+        color: white;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--border-color);
+    }
+    body.dark-mode .wa-sidebar-header {
+        background-color: #1e293b;
+    }
+
+    .wa-search-bar {
+        padding: 8px 12px;
+        background-color: var(--card-bg);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .wa-search-wrapper {
+        background-color: #f0f2f5;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        padding: 5px 12px;
+        border: 1px solid #d1d5db;
+    }
+    body.dark-mode .wa-search-wrapper {
+        background-color: #202c33;
+        border-color: #4b5563;
+    }
+
+    .wa-search-wrapper input {
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: 0.9rem;
+        width: 100%;
+        color: var(--text-color);
+    }
+
+    .wa-chat-list {
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+
+    .wa-chat-item {
+        cursor: pointer;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid rgba(0,0,0,0.04);
+        transition: background-color 0.2s;
+    }
+
+    .wa-chat-item:hover, .wa-chat-item.active {
+        background-color: #f0f2f5;
+    }
+    body.dark-mode .wa-chat-item:hover, body.dark-mode .wa-chat-item.active {
+        background-color: #2a3942;
+    }
+
+    .wa-chat-window {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+    }
+
+    .wa-chat-header {
+        background-color: #075e54; /* WhatsApp green */
+        color: white;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 10;
+    }
+    body.dark-mode .wa-chat-header {
+        background-color: #1e293b;
+    }
+
+    .wa-chat-body {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 20px;
+        background-color: #efeae2;
+        background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+        background-repeat: repeat;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    body.dark-mode .wa-chat-body {
+        background-color: #0b141a;
+        background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+        filter: invert(0.9) hue-rotate(180deg);
+    }
+
+    .wa-chat-footer {
+        background-color: #f0f2f5;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-top: 1px solid var(--border-color);
+    }
+    body.dark-mode .wa-chat-footer {
+        background-color: #202c33;
+    }
+
+    .wa-bubble {
+        max-width: 65%;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        position: relative;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+        color: #303030 !important;
+    }
+
+    .wa-bubble-received {
+        background-color: #ffffff;
+        align-self: flex-start;
+        border-top-left-radius: 0;
+    }
+
+    .wa-bubble-sent {
+        background-color: #d9fdd3;
+        align-self: flex-end;
+        border-top-right-radius: 0;
+    }
+
+    .wa-time {
+        font-size: 0.7rem;
+        color: #667781;
+        float: right;
+        margin-top: 4px;
+        margin-left: 8px;
+    }
+
+    .wa-green-dot {
+        width: 10px;
+        height: 10px;
+        background-color: #25d366;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    /* WhatsApp Monitor Custom Styles */
+    .wa-date-divider {
+        align-self: center;
+        background-color: #ffffff;
+        color: #54656f;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        margin: 10px 0;
+        font-weight: 500;
+    }
+
+    .ai-bot-card {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden;
+        max-width: 420px;
+        align-self: flex-start;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+        position: relative;
+    }
+    
+    .ai-bot-header {
+        background-color: #f3e8ff;
+        color: #6b21a8;
+        font-weight: bold;
+        font-size: 0.75rem;
+        padding: 4px 12px;
+        display: inline-flex;
+        align-items: center;
+        border-radius: 20px;
+        margin: 12px 12px 6px 12px;
+    }
+    
+    .ai-bot-body {
+        padding: 0 12px 12px 12px;
+        font-size: 0.9rem;
+        color: #1e293b;
+        white-space: pre-line;
+    }
+    
+    .ai-bot-button-list {
+        border-top: 1px solid #f1f5f9;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .ai-bot-btn {
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid #f1f5f9;
+        padding: 12px;
+        color: #1e4a8a;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-align: center;
+        width: 100%;
+        transition: background-color 0.2s;
+    }
+    .ai-bot-btn:last-child {
+        border-bottom: none;
+    }
+    .ai-bot-btn:hover {
+        background-color: #f8fafc;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="whatsapp-container">
+    <div class="row g-0 h-100">
+        <!-- Sidebar -->
+        <div class="col-md-4 wa-sidebar">
+            <div class="wa-sidebar-header text-white">
+                <div class="d-flex align-items-center gap-2">
+                    <h5 class="m-0 fw-bold d-flex align-items-center"><i class="fa-brands fa-whatsapp text-white me-2" style="font-size: 1.4rem;"></i> WhatsApp Monitor <span class="badge bg-success ms-2" style="font-size: 0.65rem; background-color: #25d366 !important;">Live</span></h5>
+                </div>
+            </div>
+            
+            <div class="wa-search-bar">
+                <div class="wa-search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass text-muted me-2" style="font-size: 0.85rem;"></i>
+                    <input type="text" id="waSearchInput" placeholder="Search by name or phone...">
+                </div>
+            </div>
+
+            <div class="wa-chat-list">
+                <!-- Hardcoded premium monitor list items matching screenshots -->
+                <div class="wa-chat-item active d-flex align-items-center justify-content-between" onclick="loadWaChat('~', '919342467103', this, 'inactive')">
+                    <div class="d-flex align-items-center gap-3 overflow-hidden">
+                        <div class="avatar bg-success text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 48px; height: 48px; min-width: 48px; background-color: #128c7e !important;">
+                            ~
+                        </div>
+                        <div class="lh-1 overflow-hidden">
+                            <h6 class="fw-bold text-dark m-0 text-truncate" style="font-size: 0.95rem;">~</h6>
+                            <span class="text-muted small mt-1 d-block text-truncate">📄 Interactive message</span>
+                        </div>
+                    </div>
+                    <div class="text-end d-flex flex-column align-items-end gap-1">
+                        <span class="text-muted small" style="font-size: 0.7rem;">04:37 PM</span>
+                        <span class="wa-green-dot"></span>
+                    </div>
+                </div>
+
+
+
+                <!-- Database items -->
+                {% for citizen in citizens %}
+                {% if citizen.mobile_number != '919342467103' and citizen.citizen_name != '~' %}
+                <div class="wa-chat-item d-flex align-items-center justify-content-between" onclick="loadWaChat('{{ citizen.citizen_name }}', '{{ citizen.mobile_number }}', this, 'active')">
+                    <div class="d-flex align-items-center gap-3 overflow-hidden">
+                        <div class="avatar bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 48px; height: 48px; min-width: 48px;">
+                            {{ citizen.citizen_name|slice:":1"|upper }}
+                        </div>
+                        <div class="lh-1 overflow-hidden">
+                            <h6 class="fw-bold text-dark m-0 text-truncate" style="font-size: 0.95rem;">{{ citizen.citizen_name }}</h6>
+                            <span class="text-muted small mt-1 d-block text-truncate">+91 {{ citizen.mobile_number }}</span>
+                        </div>
+                    </div>
+                    <div class="text-end d-flex flex-column align-items-end gap-1">
+                        <span class="text-muted small" style="font-size: 0.7rem;">12:00 PM</span>
+                        <span class="wa-green-dot"></span>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Chat screen -->
+        <div class="col-md-8 wa-chat-window">
+            <div class="wa-chat-header text-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="avatar bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" id="waHeaderAvatar" style="width: 40px; height: 40px;">
+                        ~
+                    </div>
+                    <div class="lh-1">
+                        <h6 class="fw-bold m-0" id="waHeaderName" style="color: #ffffff !important;">~</h6>
+                        <span class="small" id="waHeaderPhone" style="font-size: 0.8rem; color: rgba(255,255,255,0.85);">919342467103</span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-sm fw-bold px-3 py-1 text-white" id="connectAgentBtn" style="background-color: #25d366; border: none; border-radius: 20px;">
+                        <i class="fa-solid fa-circle-play me-1"></i> Connect Agent
+                    </button>
+                    <span class="badge" id="chatStatusBadge" style="background-color: #f97316; font-size: 0.75rem; padding: 6px 12px; border-radius: 20px;">Inactive</span>
+                </div>
+            </div>
+
+            <!-- Messages Grid -->
+            <div class="wa-chat-body" id="waMessagesArea">
+                <!-- Loaded dynamically by JavaScript -->
+            </div>
+
+            <!-- Input area -->
+            <div class="wa-chat-footer">
+                <i class="fa-regular fa-face-smile text-muted fs-4 cursor-pointer"></i>
+                <i class="fa-solid fa-paperclip text-muted fs-4 cursor-pointer"></i>
+                <form id="waForm" class="flex-grow-1 d-flex gap-2 mb-0">
+                    <input type="text" class="form-control rounded-pill bg-white border-0 py-2 px-4 shadow-none" id="waInput" placeholder="Type a message..." required autocomplete="off">
+                    <button type="submit" class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;"><i class="fa-solid fa-paper-plane text-white"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function loadWaChat(name, mobile, element) {
+        $('.wa-chat-item').removeClass('active');
+        $(element).addClass('active');
+
+        $('#waHeaderName').text(name);
+        $('#waHeaderAvatar').text(name.slice(0, 1).toUpperCase());
+
+        $('#waMessagesArea').html(`
+            <div class="wa-bubble wa-bubble-received">
+                Hello, this is ${name}. I am following up on my registered grievance regarding civic maintenance.
+                <span class="wa-time">10:15 AM</span>
+            </div>
+            <div class="wa-bubble wa-bubble-sent">
+                Hello ${name}, thank you for contacting Namakkal Municipal Corporation. We are verifying the timeline status.
+                <span class="wa-time">10:17 AM <i class="fa-solid fa-check-double text-info ms-1"></i></span>
+            </div>
+        `);
+    }
+
+    $(document).ready(function() {
+        let firstChat = $('.wa-chat-item').first();
+        if (firstChat.length > 0) {
+            firstChat.trigger('click');
+        }
+
+        // Live Chat Search
+        $('#waSearchInput').on('keyup', function() {
+            let val = $(this).val().toLowerCase();
+            $('.wa-chat-item').each(function() {
+                let name = $(this).find('h6').text().toLowerCase();
+                let mobile = $(this).find('span').text().toLowerCase();
+                if (name.includes(val) || mobile.includes(val)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+
+        // Chat Form Submit
+        $('#waForm').submit(function(e) {
+            e.preventDefault();
+            let msg = $('#waInput').val().trim();
+            if (msg === '') return;
+
+            let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            $('#waMessagesArea').append(`
+                <div class="wa-bubble wa-bubble-sent">
+                    ${msg}
+                    <span class="wa-time">${time} <i class="fa-solid fa-check-double text-info ms-1"></i></span>
+                </div>
+            `);
+            $('#waInput').val('');
+            
+            let body = document.getElementById('waMessagesArea');
+            body.scrollTop = body.scrollHeight;
+
+            // Simulated response
+            setTimeout(function() {
+                $('#waMessagesArea').append(`
+                    <div class="wa-bubble wa-bubble-received">
+                        Thank you for your prompt response. I will wait for updates.
+                        <span class="wa-time">${time}</span>
+                    </div>
+                `);
+                body.scrollTop = body.scrollHeight;
+
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'New WhatsApp Alert received',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }, 1500);
+        });
+    });
+</script>
+{% endblock %}

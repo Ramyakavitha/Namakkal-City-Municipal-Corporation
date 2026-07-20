@@ -1,0 +1,689 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Message Templates | Namakkal PGR Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Premium custom purple colors and styling to match the screenshot */
+    :root {
+        --purple-theme: #6f42c1;
+        --purple-theme-hover: #59359a;
+    }
+
+    .btn-purple {
+        background-color: var(--purple-theme) !important;
+        border-color: var(--purple-theme) !important;
+        color: #ffffff !important;
+        font-weight: 500;
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .btn-purple:hover {
+        background-color: var(--purple-theme-hover) !important;
+        border-color: var(--purple-theme-hover) !important;
+        color: #ffffff !important;
+    }
+
+    .btn-outline-purple {
+        background-color: transparent !important;
+        border: 1px solid var(--purple-theme) !important;
+        color: var(--purple-theme) !important;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .btn-outline-purple:hover {
+        background-color: var(--purple-theme) !important;
+        color: #ffffff !important;
+    }
+
+    /* Badges conforming to screenshot design */
+    .badge-text-type {
+        background-color: #e6f4ea !important;
+        color: #137333 !important;
+        border: 1px solid #ceead6 !important;
+        font-weight: 600;
+        font-size: 0.75rem;
+        padding: 5px 10px;
+        text-transform: uppercase;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    .badge-button-type,
+    .badge-list-type,
+    .badge-flow-type {
+        background-color: #e8f0fe !important;
+        color: #1a73e8 !important;
+        border: 1px solid #d2e3fc !important;
+        font-weight: 600;
+        font-size: 0.75rem;
+        padding: 5px 10px;
+        text-transform: uppercase;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    .badge-category {
+        background-color: #f1f3f4 !important;
+        color: #3c4043 !important;
+        border: 1px solid #dadce0 !important;
+        font-weight: 600;
+        font-size: 0.75rem;
+        padding: 5px 10px;
+        text-transform: uppercase;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    .badge-status-approved {
+        background-color: #e6f4ea !important;
+        color: #137333 !important;
+        border: 1px solid #ceead6 !important;
+        font-weight: 600;
+        font-size: 0.75rem;
+        padding: 5px 10px;
+        text-transform: uppercase;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    .badge-status-pending {
+        background-color: #fef7e0 !important;
+        color: #b06000 !important;
+        border: 1px solid #feebc8 !important;
+        font-weight: 600;
+        font-size: 0.75rem;
+        padding: 5px 10px;
+        text-transform: uppercase;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    /* Circle Action Buttons */
+    .btn-circle-edit {
+        width: 32px;
+        height: 32px;
+        border-radius: 50% !important;
+        border: 1px solid #3b82f6 !important;
+        color: #3b82f6 !important;
+        background-color: transparent !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .btn-circle-edit:hover {
+        background-color: #3b82f6 !important;
+        color: #ffffff !important;
+    }
+
+    .btn-circle-delete {
+        width: 32px;
+        height: 32px;
+        border-radius: 50% !important;
+        border: 1px solid #ef4444 !important;
+        color: #ef4444 !important;
+        background-color: transparent !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .btn-circle-delete:hover {
+        background-color: #ef4444 !important;
+        color: #ffffff !important;
+    }
+
+    /* Table Typography and Padding */
+    .templates-table {
+        font-size: 0.95rem;
+    }
+
+    .templates-table th {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #e2e8f0;
+        padding: 14px 16px;
+    }
+
+    .templates-table td {
+        padding: 16px;
+        border-bottom: 1px solid #f1f5f9;
+        color: #334155;
+    }
+
+    .templates-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Search & dropdown inputs in header */
+    .header-search-control {
+        width: 200px !important;
+        height: 38px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px !important;
+        padding-left: 12px;
+        font-size: 0.9rem;
+    }
+
+    .header-search-control:focus {
+        border-color: var(--purple-theme);
+        box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.15);
+    }
+
+    .header-select-control {
+        width: 150px !important;
+        height: 38px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px !important;
+        font-size: 0.9rem;
+    }
+
+    .header-select-control:focus {
+        border-color: var(--purple-theme);
+        box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.15);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 0.35s ease-out forwards;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4 g-3">
+    <div class="col-md-7 col-12">
+        <h3 class="fw-bold text-primary m-0">📱 Message Templates</h3>
+        <span class="text-muted small">Design and manage your WhatsApp message templates</span>
+    </div>
+    <div class="col-md-5 col-12 text-md-end">
+        <div class="d-flex justify-content-md-end gap-2">
+            <button class="btn btn-outline-purple btn-sm" id="btnSync"><i class="fa-solid fa-rotate me-1"></i> Sync
+                Statuses</button>
+            <button class="btn btn-purple btn-sm" id="btnToggleCreate"><i class="fa-solid fa-plus me-1"></i> Create
+                New</button>
+            <button class="btn btn-secondary btn-sm d-none" id="btnToggleList"><i
+                    class="fa-solid fa-arrow-left me-1"></i> Back to List</button>
+        </div>
+    </div>
+</div>
+
+<!-- STATE A: EXISTING TEMPLATES LIST -->
+<div id="listViewBlock">
+    <div class="card dashboard-card border-0 shadow-sm">
+        <div
+            class="card-header bg-white py-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 border-bottom-0">
+            <h5 class="m-0 fw-bold text-dark d-flex align-items-center">
+                <i class="fa-solid fa-table-cells text-primary me-2"></i> Existing Templates
+            </h5>
+            <div class="d-flex align-items-center gap-2 flex-wrap ms-md-auto">
+                <input type="text" class="form-control form-control-sm header-search-control" id="searchTemplateInput"
+                    placeholder="Search templates...">
+                <select class="form-select form-select-sm header-select-control" id="statusFilterSelect">
+                    <option value="">All Statuses</option>
+                    <option value="APPROVED">APPROVED</option>
+                    <option value="PENDING REVIEW">PENDING REVIEW</option>
+                </select>
+                <button class="btn btn-purple btn-sm px-3" id="btnFilter"
+                    style="border-radius: 8px !important; height: 38px;">Filter</button>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 templates-table w-100">
+                    <thead class="table-light border-top">
+                        <tr>
+                            <th class="ps-4">Template</th>
+                            <th>Type</th>
+                            <th>Category</th>
+                            <th>Meta Status</th>
+                            <th class="text-center">Submit</th>
+                            <th class="text-center pe-4">Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody id="templatesTableBody">
+                        <!-- Row 1: abii -->
+                        <tr class="template-row" data-name="abii" data-status="APPROVED">
+                            <td class="ps-4">
+                                <div class="fw-bold text-dark mb-0">abii</div>
+                                <div class="text-muted small" style="font-size: 0.75rem;">Jul 09, 2026</div>
+                            </td>
+                            <td>
+                                <span class="badge badge-text-type">TEXT</span>
+                            </td>
+                            <td>
+                                <span class="badge badge-category">MARKETING</span>
+                            </td>
+                            <td>
+                                <span class="badge badge-status-approved">APPROVED</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="text-muted">✓</span>
+                            </td>
+                            <td class="text-center pe-4">
+                                <button class="btn btn-circle-edit me-1" title="Edit template"><i
+                                        class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="btn btn-circle-delete btn-delete-template" title="Delete template"><i
+                                        class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <!-- Row 2: baaa -->
+                        <tr class="template-row" data-name="baaa" data-status="APPROVED">
+                            <td class="ps-4">
+                                <div class="fw-bold text-dark mb-0">baaa</div>
+                                <div class="text-muted small" style="font-size: 0.75rem;">Jul 09, 2026</div>
+                            </td>
+                            <td>
+                                <span class="badge badge-text-type">TEXT</span>
+                            </td>
+                            <td>
+                                <span class="badge badge-category">MARKETING</span>
+                            </td>
+                            <td>
+                                <span class="badge badge-status-approved">APPROVED</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="text-muted">✓</span>
+                            </td>
+                            <td class="text-center pe-4">
+                                <button class="btn btn-circle-edit me-1" title="Edit template"><i
+                                        class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="btn btn-circle-delete btn-delete-template" title="Delete template"><i
+                                        class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- STATE B: CREATE NEW TEMPLATE FORM (HIDDEN BY DEFAULT) -->
+<div id="createViewBlock" class="d-none">
+    <div class="card dashboard-card">
+        <div class="card-header bg-secondary text-white py-3">
+            <h5 class="m-0 fw-bold"><i class="fa-solid fa-plus-circle me-2"></i> Create New Template</h5>
+        </div>
+        <div class="card-body p-4">
+            <form id="templateBuilderForm">
+                <!-- Basic details -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-bold text-secondary">Template Name</label>
+                        <input type="text" class="form-control" id="templateName"
+                            placeholder="e.g. complaint_status_update" required>
+                        <div class="form-text text-muted small">Lowercase and underscores only</div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label class="form-label fw-bold text-secondary">Category</label>
+                        <select class="form-select" id="templateCategory">
+                            <option>Marketing (Promotions)</option>
+                            <option selected>Utility</option>
+                            <option>Authentication</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label class="form-label fw-bold text-secondary">Language</label>
+                        <select class="form-select" id="templateLanguage">
+                            <option selected>English</option>
+                            <option>Tamil</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 1: Interactive type -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-secondary">1. Interactive Type</label>
+                    <select class="form-select" id="interactiveType">
+                        <option>Quick Reply Buttons</option>
+                        <option>List Message</option>
+                        <option>WhatsApp Flow</option>
+                        <option>None (Text Only)</option>
+                    </select>
+                </div>
+
+                <!-- Step 2: Content -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-secondary">2. Base Content</label>
+                    <div class="border rounded p-3 bg-light">
+                        <!-- Header type -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Header Type</label>
+                            <select class="form-select" id="headerType">
+                                <option>Text Header</option>
+                                <option>None</option>
+                            </select>
+                        </div>
+                        <!-- Header Text -->
+                        <div class="mb-3" id="headerTextInputWrapper">
+                            <label class="form-label fw-semibold">Header text (Optional, e.g. Welcome)</label>
+                            <input type="text" class="form-control" id="headerText"
+                                placeholder="e.g. Namakkal Corporation">
+                        </div>
+                        <!-- Message Body -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Message Body (Required)</label>
+                            <textarea class="form-control" id="bodyText" rows="3"
+                                required>Hello {{1}}, your complaint regarding {{2}} has been registered successfully.</textarea>
+                        </div>
+                        <!-- Footer Text -->
+                        <div>
+                            <label class="form-label fw-semibold">Footer Text (Optional)</label>
+                            <input type="text" class="form-control" id="footerText"
+                                placeholder="e.g. Karur Corporation">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Buttons Configuration -->
+                <div class="mb-4" id="buttonsConfigWrapper">
+                    <label class="form-label fw-bold text-secondary">3. Buttons Configuration</label>
+                    <div class="border rounded p-3 bg-light">
+                        <div id="buttonsWrapper">
+                        </div>
+                        <div class="text-center mt-2">
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="btnAddButton">
+                                <i class="fa-solid fa-plus me-1"></i> Add Quick Reply Button
+                            </button>
+                            <div class="form-text text-muted small mt-1">Maximum 3 Quick Reply buttons allowed.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary py-2 px-4 fw-bold w-100"><i
+                        class="fa-solid fa-floppy-disk me-2"></i> 💾 Save Template</button>
+            </form>
+
+            <!-- Live Preview -->
+            <div class="mt-4 pt-4 border-top">
+                <h6 class="fw-bold text-secondary mb-2">Live Preview</h6>
+                <div class="card bg-light border p-3 rounded-3" style="max-width: 400px;">
+                    <div class="bg-white p-3 rounded shadow-sm text-start" id="livePreviewBox">
+                        <div class="fw-bold text-secondary small mb-1" id="previewHeader">Namakkal Corporation</div>
+                        <p class="small text-dark mb-2" id="previewBody">Hello User, your complaint has been registered
+                            successfully.</p>
+                        <div class="text-muted small" id="previewFooter" style="font-size: 0.75rem;">Karur Corporation
+                        </div>
+                        <hr class="my-2">
+                        <div class="d-grid gap-1 text-center" id="previewButtons">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let buttonCount = 0;
+
+    function renumberButtons() {
+        buttonCount = 0;
+        $('#buttonsWrapper .card').each(function (index) {
+            buttonCount = index + 1;
+            $(this).find('.btn-number-label').text(`Button ${buttonCount}`);
+            $(this).find('.btn-text-label').text(`Button ${buttonCount} Text`);
+            $(this).find('.btn-id-label').text(`Button ${buttonCount} ID`);
+        });
+        if (buttonCount >= 3) {
+            $('#btnAddButton').prop('disabled', true);
+        } else {
+            $('#btnAddButton').prop('disabled', false);
+        }
+    }
+
+    function removeButton(btn) {
+        $(btn).closest('.card').remove();
+        renumberButtons();
+        updatePreview();
+    }
+
+    function updatePreview() {
+        if ($('#headerType').val() === 'Text Header') {
+            $('#previewHeader').text($('#headerText').val()).show();
+        } else {
+            $('#previewHeader').hide();
+        }
+
+        let body = $('#bodyText').val().replace('{{1}}', 'Citizen').replace('{{2}}', 'Civic Issue');
+        $('#previewBody').text(body);
+
+        $('#previewFooter').text($('#footerText').val());
+
+        let buttonsHtml = '';
+        if ($('#interactiveType').val() === 'Quick Reply Buttons') {
+            $('#buttonsWrapper .btn-text-input').each(function () {
+                let val = $(this).val().trim();
+                if (val) {
+                    buttonsHtml += `<button class="btn btn-light btn-sm text-primary small py-1 border-0">${val}</button>`;
+                }
+            });
+        }
+        $('#previewButtons').html(buttonsHtml);
+    }
+
+    $(document).ready(function () {
+        // Toggle view logic
+        $('#btnToggleCreate').click(function () {
+            $('#listViewBlock').addClass('d-none');
+            $('#createViewBlock').removeClass('d-none');
+            $('#btnToggleCreate').addClass('d-none');
+            $('#btnToggleList').removeClass('d-none');
+        });
+
+        $('#btnToggleList').click(function () {
+            $('#createViewBlock').addClass('d-none');
+            $('#listViewBlock').removeClass('d-none');
+            $('#btnToggleList').addClass('d-none');
+            $('#btnToggleCreate').removeClass('d-none');
+        });
+
+        // Form updates preview
+        $('#headerText, #bodyText, #footerText, #headerType').on('input change', function () {
+            updatePreview();
+        });
+
+        // Toggle buttons config based on interactive type
+        $('#interactiveType').change(function () {
+            let type = $(this).val();
+            if (type === 'Quick Reply Buttons') {
+                $('#buttonsConfigWrapper').removeClass('d-none');
+                $('#previewButtons').show();
+            } else {
+                $('#buttonsConfigWrapper').addClass('d-none');
+                $('#previewButtons').hide();
+            }
+            updatePreview();
+        });
+
+        // Dynamic buttons binding
+        $('#btnAddButton').click(function () {
+            if (buttonCount >= 3) {
+                Swal.fire('Limit Reached', 'Maximum 3 Quick Reply buttons allowed.', 'warning');
+                return;
+            }
+            let btnHtml = `
+                <div class="card border p-3 mb-3 bg-white position-relative shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-secondary btn-number-label">Button</span>
+                        <button type="button" class="btn btn-link text-danger btn-sm p-0 text-decoration-none" onclick="removeButton(this)"><i class="fa-solid fa-trash me-1"></i> Remove</button>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md-6 col-12">
+                            <label class="form-label small fw-semibold mb-1 btn-text-label">Button Text</label>
+                            <input type="text" class="form-control form-control-sm btn-text-input" placeholder="Button Text (e.g. Track Status)" oninput="updatePreview()">
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <label class="form-label small fw-semibold mb-1 btn-id-label">Button ID</label>
+                            <input type="text" class="form-control form-control-sm btn-id-input" placeholder="Button ID (e.g. track_status)">
+                        </div>
+                    </div>
+                </div>
+            `;
+            $('#buttonsWrapper').append(btnHtml);
+            renumberButtons();
+            updatePreview();
+        });
+
+        // Sync statuses
+        $('#btnSync').click(function () {
+            Swal.fire({
+                title: 'Syncing Statuses',
+                text: 'Fetching latest template status from Meta Cloud API...',
+                icon: 'info',
+                timer: 1500,
+                showConfirmButton: false
+            }).then(() => {
+                Swal.fire('Synced', 'Templates statuses synchronized successfully.', 'success');
+            });
+        });
+
+        // Filter functionality
+        function applyFilters() {
+            let searchQuery = $('#searchTemplateInput').val().toLowerCase().trim();
+            let selectedStatus = $('#statusFilterSelect').val();
+
+            $('.template-row').each(function () {
+                let name = $(this).attr('data-name').toLowerCase();
+                let status = $(this).attr('data-status');
+
+                let matchesSearch = name.includes(searchQuery);
+                let matchesStatus = !selectedStatus || status === selectedStatus;
+
+                if (matchesSearch && matchesStatus) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+
+        $('#searchTemplateInput').on('keyup input', function () {
+            applyFilters();
+        });
+
+        $('#statusFilterSelect').on('change', function () {
+            applyFilters();
+        });
+
+        $('#btnFilter').click(function () {
+            applyFilters();
+        });
+
+        // Delete template logic
+        $(document).on('click', '.btn-delete-template', function () {
+            let row = $(this).closest('tr');
+            let name = row.attr('data-name');
+            Swal.fire({
+                title: 'Delete Template?',
+                text: `Are you sure you want to delete template "${name}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it',
+                confirmButtonColor: '#dc3545',
+                cancelButtonText: 'Cancel'
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    row.fadeOut(300, function () {
+                        $(this).remove();
+                    });
+                    Swal.fire('Deleted', 'Template deleted successfully.', 'success');
+                }
+            });
+        });
+
+        // Submit form (directly save template and show it in list, no confirmation dialog)
+        $('#templateBuilderForm').submit(function (e) {
+            e.preventDefault();
+
+            // Extract values
+            let name = $('#templateName').val().trim();
+            let category = $('#templateCategory').val().split(' ')[0].toUpperCase();
+            let interactiveType = $('#interactiveType').val();
+
+            let date = new Date();
+            let monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            let dateStr = `${monthNames[date.getMonth()]} ${String(date.getDate()).padStart(2, '0')}, ${date.getFullYear()}`;
+
+            let typeBadgeHtml = '';
+            if (interactiveType === 'Quick Reply Buttons') {
+                typeBadgeHtml = '<span class="badge badge-button-type">BUTTON</span>';
+            } else if (interactiveType === 'List Message') {
+                typeBadgeHtml = '<span class="badge badge-list-type">LIST</span>';
+            } else if (interactiveType === 'WhatsApp Flow') {
+                typeBadgeHtml = '<span class="badge badge-flow-type">FLOW</span>';
+            } else {
+                typeBadgeHtml = '<span class="badge badge-text-type">TEXT</span>';
+            }
+
+            // Create row element with APPROVED status to match image 1 and instant visibility
+            let newRow = `
+                <tr class="template-row animate-fade-in" data-name="${name}" data-status="APPROVED">
+                    <td class="ps-4">
+                        <div class="fw-bold text-dark mb-0">${name}</div>
+                        <div class="text-muted small" style="font-size: 0.75rem;">${dateStr}</div>
+                    </td>
+                    <td>
+                        ${typeBadgeHtml}
+                    </td>
+                    <td>
+                        <span class="badge badge-category">${category}</span>
+                    </td>
+                    <td>
+                        <span class="badge badge-status-approved">APPROVED</span>
+                    </td>
+                    <td class="text-center">
+                        <span class="text-muted">✓</span>
+                    </td>
+                    <td class="text-center pe-4">
+                        <button class="btn btn-circle-edit me-1" title="Edit template"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button class="btn btn-circle-delete btn-delete-template" title="Delete template"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `;
+
+            // Prepend new row to table body
+            $('#templatesTableBody').prepend(newRow);
+
+            // Reset form and reset button counts
+            $('#templateBuilderForm')[0].reset();
+            $('#buttonsWrapper').empty();
+            renumberButtons();
+            updatePreview();
+
+            // Show success message and transition to list view directly
+            Swal.fire('Created', 'Template created successfully.', 'success');
+            $('#btnToggleList').trigger('click');
+        });
+
+        // Initialize state
+        $('#interactiveType').trigger('change');
+        updatePreview();
+    });
+</script>
+{% endblock %}

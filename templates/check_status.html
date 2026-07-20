@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Track Status | Namakkal PGR{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card shadow-sm border-0 p-4 mb-4">
+            <h3 class="fw-bold text-primary mb-3"><i class="fa-solid fa-magnifying-glass me-2"></i> Track Complaint Status</h3>
+            <p class="text-muted">Search using your unique Complaint Number (e.g. <code>NMCMC-202600001</code>) or your registered 10-digit mobile number.</p>
+            
+            <form method="get" action="{% url 'check_status' %}" class="row g-2">
+                <div class="col-md-9">
+                    <input type="text" name="query" class="form-control form-control-lg" placeholder="Enter Complaint Number or Mobile Number" value="{{ query }}" required>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary btn-lg w-100"><i class="fa-solid fa-search me-1"></i> Track Status</button>
+                </div>
+            </form>
+        </div>
+
+        {% if query %}
+            <div class="mb-4">
+                <h4>Search Results for: <span class="text-primary">"{{ query }}"</span></h4>
+            </div>
+
+            {% for complaint in complaints %}
+                <div class="card shadow-sm border-0 mb-4 overflow-hidden">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
+                        <h5 class="m-0 fw-bold"><i class="fa-solid fa-file-invoice me-2"></i> {{ complaint.complaint_number }}</h5>
+                        <span class="badge bg-warning text-dark px-3 py-2 fw-bold">{{ complaint.status.name }}</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <h6 class="text-uppercase text-muted fw-bold small">Citizen Information</h6>
+                                <p class="mb-1"><strong>Name:</strong> {{ complaint.citizen_name }}</p>
+                                <p class="mb-1"><strong>Mobile:</strong> {{ complaint.mobile_number }}</p>
+                                <p class="mb-1"><strong>Address:</strong> {{ complaint.street_address }}</p>
+                                <p class="mb-0"><strong>Email:</strong> {{ complaint.email|default:"N/A" }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-uppercase text-muted fw-bold small">Grievance Information</h6>
+                                <p class="mb-1"><strong>Category:</strong> {{ complaint.get_category_display }}</p>
+                                <p class="mb-1"><strong>Sub-category:</strong> {{ complaint.complaint_type }}</p>
+                                <p class="mb-1"><strong>Date Registered:</strong> {{ complaint.created_at|date:"d-m-Y H:i" }}</p>
+                                <p class="mb-0"><strong>Assigned Officer:</strong> {{ complaint.assigned_officer.name|default:"Awaiting Assignment" }}</p>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Status Timeline -->
+                        <h6 class="text-uppercase text-muted fw-bold small mb-4">Redressal Timeline</h6>
+                        <div class="row text-center g-2 position-relative mb-4">
+                            <div class="col">
+                                <div class="p-2 border rounded {% if complaint.status.name == 'Submitted' or complaint.status.name == 'Assigned' or complaint.status.name == 'In Progress' or complaint.status.name == 'Resolved' or complaint.status.name == 'Closed' %}bg-success text-white fw-bold{% else %}bg-light text-muted{% endif %}">
+                                    <i class="fa-solid fa-file-circle-plus mb-1"></i><br>Submitted
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="p-2 border rounded {% if complaint.status.name == 'Assigned' or complaint.status.name == 'In Progress' or complaint.status.name == 'Resolved' or complaint.status.name == 'Closed' %}bg-success text-white fw-bold{% else %}bg-light text-muted{% endif %}">
+                                    <i class="fa-solid fa-user-check mb-1"></i><br>Assigned
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="p-2 border rounded {% if complaint.status.name == 'In Progress' or complaint.status.name == 'Resolved' or complaint.status.name == 'Closed' %}bg-success text-white fw-bold{% else %}bg-light text-muted{% endif %}">
+                                    <i class="fa-solid fa-spinner mb-1"></i><br>In Progress
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="p-2 border rounded {% if complaint.status.name == 'Resolved' or complaint.status.name == 'Closed' %}bg-success text-white fw-bold{% else %}bg-light text-muted{% endif %}">
+                                    <i class="fa-solid fa-check-double mb-1"></i><br>Resolved
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="p-2 border rounded {% if complaint.status.name == 'Closed' %}bg-success text-white fw-bold{% else %}bg-light text-muted{% endif %}">
+                                    <i class="fa-solid fa-folder-closed mb-1"></i><br>Closed
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Timeline Log -->
+                        <div class="bg-light p-3 rounded mb-4">
+                            <h6 class="fw-bold mb-2">Detailed Status Log:</h6>
+                            <ul class="list-unstyled mb-0">
+                                {% for item in complaint.timeline.all %}
+                                    <li class="mb-2">
+                                        <small class="text-muted">{{ item.changed_at|date:"d-m-Y H:i" }}</small> - 
+                                        <strong>{{ item.status.name }}</strong>: 
+                                        <span class="text-dark">{{ item.remarks }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                        {% if complaint.resolution_remarks %}
+                            <div class="alert alert-success mb-4">
+                                <h6 class="fw-bold"><i class="fa-solid fa-circle-info me-1"></i> Officer Resolution Remarks:</h6>
+                                <p class="m-0">{{ complaint.resolution_remarks }}</p>
+                            </div>
+                        {% endif %}
+
+                        {% if complaint.images.exists %}
+                            <div class="mb-4">
+                                <h6 class="text-uppercase text-muted fw-bold small mb-2">Complaint Images</h6>
+                                <div class="d-flex gap-2">
+                                    {% for img in complaint.images.all %}
+                                        <a href="{{ img.image.url }}" target="_blank">
+                                            <img src="{{ img.image.url }}" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'complaint_detail' complaint.complaint_number %}" class="btn btn-outline-primary"><i class="fa-solid fa-circle-info me-1"></i> View Full Details</a>
+                            <button onclick="window.print();" class="btn btn-outline-secondary"><i class="fa-solid fa-print me-1"></i> Print Receipt</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

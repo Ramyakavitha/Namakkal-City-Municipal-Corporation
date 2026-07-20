@@ -1,0 +1,192 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Namakkal City Municipal Corporation | Public Grievance Redressal{% endblock %}</title>
+    <!-- Meta tags for SEO -->
+    <meta name="description" content="Public Grievance Redressal System (PGR) - Namakkal City Municipal Corporation. Official citizen grievance registration and status tracking portal.">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <!-- Leaflet Map CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2.2">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Government Top Bar -->
+    <div class="gov-top-bar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div>
+                <span class="me-3 trn" data-en="<i class='fa-solid fa-building-columns me-1'></i> Government of Tamil Nadu" data-ta="<i class='fa-solid fa-building-columns me-1'></i> தமிழ்நாடு அரசு"><i class="fa-solid fa-building-columns me-1"></i> Government of Tamil Nadu</span>
+                <span><i class="fa-solid fa-phone me-1"></i> <span class="trn" data-en="Helpline:" data-ta="உதவி எண்:">Helpline:</span> <a href="tel:06286-221777">06286-221777</a></span>
+            </div>
+            <div>
+                <a href="#" id="lang-btn-en" class="me-2 text-decoration-none fw-bold text-white">EN</a> | 
+                <a href="#" id="lang-btn-ta" class="ms-2 text-decoration-none text-white-50">தமிழ்</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Corporation Banner -->
+    <header class="corp-header-banner">
+        <div class="container py-3">
+            <div class="row align-items-center text-center text-md-start">
+                <div class="col-md-2 col-12 mb-3 mb-md-0 d-flex justify-content-center">
+                    <img src="{% static 'images/logo.png' %}?v=1.4" alt="Namakkal City Municipal Corporation Emblem" class="corp-logo img-fluid" style="max-height: 100px;">
+                </div>
+                <div class="col-md-10 col-12">
+                    <h1 class="corp-title-main m-0 fs-2 fw-bold trn" data-en="Namakkal City Municipal Corporation" data-ta="நாமக்கல் மாநகராட்சி">Namakkal City Municipal Corporation</h1>
+                    <h2 class="corp-title-tamil my-1 fs-3 trn" data-en="நாமக்கல் மாநகராட்சி" data-ta="நாமக்கல் மாநகராட்சி">நாமக்கல் மாநகராட்சி</h2>
+                    <p class="corp-tagline m-0 fs-6 text-white fw-semibold trn" data-en="Public Grievance Redressal System | மக்கள் சேவை | இறைவன் சேவை" data-ta="பொது மக்கள் குறைதீர்க்கும் தளம் | மக்கள் சேவை | இறைவன் சேவை">Public Grievance Redressal System | மக்கள் சேவை | இறைவன் சேவை</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top py-2">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %} trn" data-en="<i class='fa-solid fa-house me-1'></i> Home" data-ta="<i class='fa-solid fa-house me-1'></i> முகப்பு" href="{% url 'home' %}"><i class="fa-solid fa-house me-1"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'register' in request.path %}active{% endif %} trn" data-en="<i class='fa-solid fa-file-pen me-1'></i> Register Complaint" data-ta="<i class='fa-solid fa-file-pen me-1'></i> புகார் பதிவு" href="{% url 'register_complaint' %}"><i class="fa-solid fa-file-pen me-1"></i> Register Complaint</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'check-status' in request.path %}active{% endif %} trn" data-en="<i class='fa-solid fa-magnifying-glass me-1'></i> Check Status" data-ta="<i class='fa-solid fa-magnifying-glass me-1'></i> புகார் நிலை" href="{% url 'check_status' %}"><i class="fa-solid fa-magnifying-glass me-1"></i> Check Status</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'contact' in request.path %}active{% endif %} trn" data-en="<i class='fa-solid fa-envelope me-1'></i> Contact Us" data-ta="<i class='fa-solid fa-envelope me-1'></i> தொடர்பு கொள்ள" href="{% url 'contact' %}"><i class="fa-solid fa-envelope me-1"></i> Contact Us</a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="py-4">
+        <div class="container">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'warning' %}warning{% else %}success{% endif %} alert-dismissible fade show" role="alert">
+                        <strong>Notification:</strong> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-5 mb-4 mb-lg-0">
+                    <h5 class="text-white mb-3 trn" data-en="Namakkal City Municipal Corporation" data-ta="நாமக்கல் மாநகராட்சி">Namakkal City Municipal Corporation</h5>
+                    <p class="small text-muted trn" data-en="&copy; 2026 Namakkal City Municipal Corporation. All Rights Reserved." data-ta="&copy; 2026 நாமக்கல் மாநகராட்சி. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.">&copy; 2026 Namakkal City Municipal Corporation. All Rights Reserved.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-white mb-3 trn" data-en="Quick Links" data-ta="விரைவு இணைப்புகள்">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'home' %}" class="small trn" data-en="Home" data-ta="முகப்பு">Home</a></li>
+                        <li><a href="{% url 'register_complaint' %}" class="small trn" data-en="Register Grievance" data-ta="புகார் பதிவு">Register Grievance</a></li>
+                        <li><a href="{% url 'check_status' %}" class="small trn" data-en="Check Grievance Status" data-ta="புகார் நிலையை சரிபார்க்க">Check Grievance Status</a></li>
+                        <li><a href="{% url 'contact' %}" class="small trn" data-en="Contact Municipal Office" data-ta="மாநகராட்சி அலுவலகத்தை தொடர்பு கொள்ள">Contact Municipal Office</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="text-white mb-3 trn" data-en="Contact Municipal Office" data-ta="மாநகராட்சி அலுவலக தொடர்பு விவரங்கள்">Contact Municipal Office</h5>
+                    <p class="small mb-1"><i class="fa-solid fa-location-dot me-2 text-warning"></i> <span class="trn" data-en="Commissioner, Namakkal Corporation, Namakkal, Tamil Nadu." data-ta="ஆணையாளர், நாமக்கல் மாநகராட்சி, நாமக்கல், தமிழ்நாடு.">Commissioner, Namakkal Corporation, Namakkal, Tamil Nadu.</span></p>
+                    <p class="small mb-1"><i class="fa-solid fa-phone me-2 text-warning"></i> 06286-221777</p>
+                    <p class="small mb-1"><i class="fa-solid fa-envelope me-2 text-warning"></i> commr.namakkal@tn.gov.in</p>
+                    <p class="small"><i class="fa-solid fa-globe me-2 text-warning"></i> <span class="trn" data-en="Official Web:" data-ta="அதிகாரப்பூர்வ இணையதளம்:">Official Web:</span> <a href="https://tnurbanlocalbodies.tn.gov.in" target="_blank">tnurbanlocalbodies.tn.gov.in</a></p>
+                </div>
+            </div>
+            <hr class="border-secondary my-4">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center">
+                <span class="small text-muted trn" data-en="Developed for digital governance enhancement." data-ta="நகராட்சி எண்முறை ஆளுமை மேம்பாட்டிற்காக உருவாக்கப்பட்டது.">Developed for municipal digital governance enhancement.</span>
+                <span class="small text-muted trn" data-en="Designed in compliance with Tamil Nadu e-Governance guidelines." data-ta="தமிழ்நாடு மின்னளுமை வழிகாட்டுதல்களின்படி வடிவமைக்கப்பட்டது.">Designed in compliance with Tamil Nadu e-Governance guidelines.</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Leaflet Map JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.all.min.js"></script>
+    
+    <script>
+    $(document).ready(function() {
+        function setLanguage(lang) {
+            localStorage.setItem('lang', lang);
+            if (lang === 'ta') {
+                $('#lang-btn-en').removeClass('fw-bold text-white').addClass('text-white-50');
+                $('#lang-btn-ta').addClass('fw-bold text-white').removeClass('text-white-50');
+                $('.trn').each(function() {
+                    let el = $(this);
+                    let ta = el.attr('data-ta');
+                    if (ta) {
+                        if (el.is('input') || el.is('textarea')) {
+                            el.attr('placeholder', ta);
+                        } else {
+                            el.html(ta);
+                        }
+                    }
+                });
+            } else {
+                $('#lang-btn-ta').removeClass('fw-bold text-white').addClass('text-white-50');
+                $('#lang-btn-en').addClass('fw-bold text-white').removeClass('text-white-50');
+                $('.trn').each(function() {
+                    let el = $(this);
+                    let en = el.attr('data-en');
+                    if (en) {
+                        if (el.is('input') || el.is('textarea')) {
+                            el.attr('placeholder', en);
+                        } else {
+                            el.html(en);
+                        }
+                    }
+                });
+            }
+        }
+
+        // Event listeners
+        $('#lang-btn-en').click(function(e) {
+            e.preventDefault();
+            setLanguage('en');
+        });
+        $('#lang-btn-ta').click(function(e) {
+            e.preventDefault();
+            setLanguage('ta');
+        });
+
+        // Initialize from local storage
+        let initialLang = localStorage.getItem('lang') || 'en';
+        setLanguage(initialLang);
+    });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

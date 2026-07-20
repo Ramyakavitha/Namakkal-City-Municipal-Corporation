@@ -1,0 +1,475 @@
+:root {
+    --primary-color: #1e4a8a;     /* Dark Blue */
+    --secondary-color: #1e4a8a;   /* Medium Blue */
+    --accent-color: #2563eb;      /* Blue instead of Sky Blue */
+    --bg-light: #eff6ff;          /* Light Blue background */
+    --text-dark: #1e4a8a;         /* Dark Blue Text */
+    --text-muted: #4b5563;
+    --success-color: #10b981;
+    --warning-color: #2563eb;
+    --danger-color: #ef4444;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Custom Amber helpers overridden with Blue & White theme */
+.bg-amber-light {
+    background-color: rgba(30, 74, 138, 0.15);
+}
+.text-amber-dark {
+    color: #1e4a8a;
+}
+.text-amber-light {
+    color: #eff6ff;
+}
+.bg-amber-soft {
+    background-color: rgba(30, 74, 138, 0.1);
+}
+.bg-danger-soft {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+.bg-warning-soft {
+    background-color: rgba(37, 99, 235, 0.1);
+}
+.bg-success-soft {
+    background-color: rgba(16, 185, 129, 0.1);
+}
+.text-amber {
+    color: #1e4a8a;
+}
+.text-amber-hover:hover {
+    color: #1e4a8a;
+}
+.bg-amber-dark {
+    background-color: #1e4a8a !important;
+}
+.bg-secondary-amber {
+    background-color: #1e4a8a !important;
+}
+.border-amber-soft {
+    border: 1px solid rgba(30, 74, 138, 0.2) !important;
+}
+.alert-amber-light {
+    background-color: #eff6ff;
+    color: #1e4a8a;
+    border: 1px solid rgba(30, 74, 138, 0.25);
+}
+
+/* Buttons */
+.btn-amber {
+    background-color: var(--secondary-color);
+    color: #ffffff;
+    border: none;
+    transition: all 0.2s ease-in-out;
+}
+.btn-amber:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+.btn-amber-outline {
+    background-color: transparent;
+    color: var(--secondary-color);
+    border: 2px solid var(--secondary-color);
+    transition: all 0.2s ease-in-out;
+}
+.btn-amber-outline:hover {
+    background-color: var(--secondary-color);
+    color: #ffffff;
+}
+
+/* Action Cards */
+.action-card {
+    border-radius: 16px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 20px rgba(15, 43, 92, 0.05) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(15, 43, 92, 0.1) !important;
+}
+
+.action-icon-wrapper {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Progress Ring / Gauge representer (55%) */
+.progress-ring-mini {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: conic-gradient(#1e4a8a 0% 55%, #e2e8f0 55% 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.progress-ring-mini::before {
+    content: '';
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    background-color: #ffffff;
+    border-radius: 50%;
+}
+.progress-ring-mini span {
+    position: relative;
+    z-index: 1;
+    font-size: 1.1rem;
+    color: #1e4a8a;
+}
+
+/* Form Responsiveness & Border Removal */
+.form-card {
+    background: white;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(15, 43, 92, 0.06);
+    padding: 35px;
+}
+
+@media (max-width: 768px) {
+    .form-card {
+        padding: 15px;
+        box-shadow: none;
+        background: transparent;
+    }
+    
+    .form-card form {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(15, 43, 92, 0.04);
+    }
+    
+    /* Remove unnecessary nested borders on mobile */
+    #otpSection, .card.bg-light {
+        padding: 15px !important;
+        border: none !important;
+        background-color: #fffbeb !important;
+        margin-bottom: 20px !important;
+    }
+}
+
+
+/* Government Top Bar */
+.gov-top-bar {
+    background-color: #0d1e3d;
+    color: #e2e8f0;
+    font-size: 0.85rem;
+    padding: 6px 0;
+    border-bottom: 2px solid var(--accent-color);
+}
+
+.gov-top-bar a {
+    color: #e2e8f0;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.gov-top-bar a:hover {
+    color: var(--accent-color);
+}
+
+/* Corporation Header Banner */
+.corp-header-banner {
+    background: #ffffff;
+    color: var(--primary-color);
+    padding: 15px 0;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.corp-logo {
+    max-height: 100px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08));
+}
+
+.corp-title-main {
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    font-size: 1.8rem;
+    color: var(--primary-color);
+}
+
+.corp-title-tamil {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+.corp-tagline {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--accent-color);
+}
+
+/* Navigation */
+.navbar-custom {
+    background-color: var(--primary-color);
+    border-bottom: 3px solid #ffffff;
+}
+
+.navbar-custom .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 600;
+    padding: 10px 18px !important;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+}
+
+.navbar-custom .nav-link:hover, 
+.navbar-custom .nav-link.active {
+    color: var(--primary-color) !important;
+    background-color: #ffffff;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #1e4a8a 0%, #1e4a8a 100%);
+    color: white;
+    padding: 60px 0;
+    text-align: center;
+    border-bottom: 4px solid var(--accent-color);
+    box-shadow: 0 4px 20px rgba(15, 43, 92, 0.15);
+}
+
+.hero-btn {
+    padding: 12px 30px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    border-radius: 50px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.hero-btn-primary {
+    background-color: #ffffff;
+    color: var(--primary-color) !important;
+    border: 2px solid #ffffff;
+}
+
+.hero-btn-primary:hover {
+    background-color: #eff6ff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
+}
+
+.hero-btn-secondary {
+    background-color: transparent;
+    color: white !important;
+    border: 2px solid white;
+}
+
+.hero-btn-secondary:hover {
+    background-color: white;
+    color: var(--primary-color) !important;
+    transform: translateY(-2px);
+}
+
+/* Cards & Stats */
+.stat-card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+}
+
+.stat-card.total::after { background-color: var(--secondary-color); }
+.stat-card.pending::after { background-color: var(--warning-color); }
+.stat-card.resolved::after { background-color: var(--success-color); }
+.stat-card.today::after { background-color: var(--danger-color); }
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.stat-number {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+/* Form Styles */
+.form-card {
+    background: white;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    padding: 35px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.form-control:focus, 
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(15, 43, 92, 0.15);
+}
+
+/* Leaflet Map */
+#leaflet-map {
+    height: 350px;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+}
+
+/* Timeline */
+.timeline-list {
+    position: relative;
+    padding-left: 30px;
+    list-style: none;
+}
+
+.timeline-list::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 9px;
+    width: 2px;
+    height: 90%;
+    background-color: #e2e8f0;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.timeline-icon {
+    position: absolute;
+    top: 3px;
+    left: -30px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: 3px solid var(--secondary-color);
+}
+
+.timeline-item.active .timeline-icon {
+    border-color: var(--success-color);
+    background-color: var(--success-color);
+}
+
+/* Admin Dashboard */
+.admin-sidebar {
+    background-color: var(--primary-color);
+    color: white;
+    min-height: 100vh;
+}
+
+.admin-sidebar a {
+    color: #94a3b8;
+    text-decoration: none;
+    padding: 12px 20px;
+    display: block;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.admin-sidebar a:hover, 
+.admin-sidebar a.active {
+    color: white;
+    background-color: rgba(255,255,255,0.08);
+    border-left: 4px solid var(--accent-color);
+}
+
+/* Footer styling */
+footer {
+    margin-top: auto;
+    background-color: #1e4a8a;
+    color: #ffffff;
+    border-top: 3px solid var(--accent-color);
+}
+
+footer a {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+footer a:hover {
+    color: #eff6ff;
+    text-decoration: underline;
+}
+
+footer .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Bootstrap Overrides to match primary theme color #1e4a8a */
+.bg-primary {
+    background-color: #1e4a8a !important;
+}
+.text-primary {
+    color: #1e4a8a !important;
+}
+.text-muted {
+    color: #1e4a8a !important;
+}
+
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #1e4a8a !important;
+    --bs-btn-border-color: #1e4a8a !important;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #163666 !important;
+    --bs-btn-hover-border-color: #122d56 !important;
+    --bs-btn-focus-shadow-rgb: 30, 74, 138;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #122d56 !important;
+    --bs-btn-active-border-color: #0e2445 !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #1e4a8a !important;
+    --bs-btn-disabled-border-color: #1e4a8a !important;
+    background-color: #1e4a8a !important;
+    border-color: #1e4a8a !important;
+}
+
+.btn-primary:hover {
+    background-color: #163666 !important;
+    border-color: #122d56 !important;
+    color: #fff !important;
+}
+
+.btn-primary:active, .btn-primary.active {
+    background-color: #122d56 !important;
+    border-color: #0e2445 !important;
+    color: #fff !important;
+}
+
+.bg-success {
+    background-color: #000000 !important;
+}

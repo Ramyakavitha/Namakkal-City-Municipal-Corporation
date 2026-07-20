@@ -1,0 +1,86 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Bulletin & News Manager | Namakkal PGR Admin{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4 g-3">
+    <div class="col-md-6">
+        <h3 class="fw-bold text-primary m-0">News & Announcements Bulletin</h3>
+        <span class="text-muted small">Publish local notices, clean city news, and scheduling alerts on the citizen portal banner feed.</span>
+    </div>
+    <div class="col-md-6 text-md-end">
+        <button class="btn btn-primary" id="btnPublishNews"><i class="fa-solid fa-upload me-1"></i> Publish Update</button>
+    </div>
+</div>
+
+<div class="card dashboard-card">
+    <div class="card-header bg-primary text-white py-3">
+        <h5 class="m-0 fw-bold"><i class="fa-solid fa-bullhorn me-2"></i> Published Bulletin Feed</h5>
+    </div>
+    <div class="card-body p-4">
+        <div class="list-group">
+            <div class="list-group-item list-group-item-action p-4 mb-3 border rounded shadow-sm">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="fw-bold text-primary mb-0">Namakkal Corporation Cleanliness Campaign</h5>
+                    <span class="badge bg-success">PUBLISHED</span>
+                </div>
+                <p class="text-muted small mb-2"><i class="fa-solid fa-calendar me-1"></i> Published on: July 2026</p>
+                <p class="mb-3 text-dark">Namakkal Municipal Corporation has initiated a dedicated cleanliness campaign across Wards 1 to 15. Report garbage collection delays to help us keep the city clean.</p>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-pen"></i> Edit</button>
+                    <button class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i> Delete</button>
+                </div>
+            </div>
+
+            <div class="list-group-item list-group-item-action p-4 mb-3 border rounded shadow-sm">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="fw-bold text-primary mb-0">Drinking Water Supply Scheduling Update</h5>
+                    <span class="badge bg-success">PUBLISHED</span>
+                </div>
+                <p class="text-muted small mb-2"><i class="fa-solid fa-calendar me-1"></i> Published on: July 2026</p>
+                <p class="mb-3 text-dark">Drinking water supply timing is updated. Please check the new timings on the official urban local bodies website or register water supply issues directly on this portal.</p>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-pen"></i> Edit</button>
+                    <button class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i> Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('#btnPublishNews').click(function() {
+            Swal.fire({
+                title: 'Publish Portal Update',
+                html: `
+                    <div class="text-start">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Title (English)</label>
+                            <input type="text" class="form-control" placeholder="e.g. Cleanliness Campaign Phase III">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Title (Tamil)</label>
+                            <input type="text" class="form-control" placeholder="எ.கா. தூய்மைப் பணி கட்டம் III">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Bulletin Content</label>
+                            <textarea class="form-control" rows="3" placeholder="Describe the announcement..."></textarea>
+                        </div>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Publish Live',
+                cancelButtonText: 'Cancel'
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    Swal.fire('Published', 'The notice has been successfully published to the home page carousel feed.', 'success');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

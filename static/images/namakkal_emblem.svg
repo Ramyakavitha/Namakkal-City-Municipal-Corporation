@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <!-- Definitions for gradients and shadows -->
+  <defs>
+    <radialGradient id="skyGrad" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#fffbeb"/>
+      <stop offset="50%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fde68a"/>
+    </radialGradient>
+    <linearGradient id="rockGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d1af72"/>
+      <stop offset="30%" stop-color="#b48c48"/>
+      <stop offset="70%" stop-color="#8c6b30"/>
+      <stop offset="100%" stop-color="#604719"/>
+    </linearGradient>
+    <linearGradient id="fortGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f3f4f6"/>
+      <stop offset="100%" stop-color="#9ca3af"/>
+    </linearGradient>
+    <filter id="dropShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Shadow Circle -->
+  <circle cx="250" cy="250" r="235" fill="none" filter="url(#dropShadow)"/>
+
+  <!-- Outer Ring (Gold/Amber Accent) -->
+  <circle cx="250" cy="250" r="230" fill="#f59e0b" stroke="#d97706" stroke-width="4"/>
+
+  <!-- Blue Ring -->
+  <circle cx="250" cy="250" r="215" fill="#005ca9" stroke="#00457c" stroke-width="3"/>
+
+  <!-- Inner Gold Ring Border -->
+  <circle cx="250" cy="250" r="175" fill="none" stroke="#f59e0b" stroke-width="3"/>
+
+  <!-- Inner Circle with Sky Gradient -->
+  <circle cx="250" cy="250" r="170" fill="url(#skyGrad)"/>
+
+  <!-- - EMBLEM CONTENT (NAMAKKAL ROCK & FORT) - -->
+
+  <!-- Water at the bottom -->
+  <path d="M 100 340 Q 250 350 400 340 L 400 410 L 100 410 Z" fill="#005ca9" opacity="0.85"/>
+  <path d="M 90 355 Q 250 365 410 355 L 410 410 L 90 410 Z" fill="#00457c" opacity="0.6"/>
+
+  <!-- The Namakkal Rock (Hill) -->
+  <path d="M 95 360 
+           Q 110 270 150 240 
+           Q 200 200 250 190 
+           Q 320 185 360 230 
+           Q 390 270 405 360 Z" 
+        fill="url(#rockGrad)" stroke="#604719" stroke-width="2"/>
+
+  <!-- Rock Texture & Shading -->
+  <path d="M 120 330 Q 180 250 240 220" fill="none" stroke="#604719" stroke-width="3" opacity="0.3" stroke-dasharray="10 15"/>
+  <path d="M 180 340 Q 230 270 300 230" fill="none" stroke="#604719" stroke-width="4" opacity="0.4" stroke-dasharray="5 10"/>
+  <path d="M 290 350 Q 320 280 350 250" fill="none" stroke="#fff" stroke-width="2" opacity="0.25"/>
+
+  <!-- Greenery/Trees on the Rock -->
+  <circle cx="150" cy="280" r="15" fill="#15803d" opacity="0.9"/>
+  <circle cx="170" cy="290" r="18" fill="#166534" opacity="0.95"/>
+  <circle cx="330" cy="290" r="15" fill="#15803d" opacity="0.9"/>
+  <circle cx="350" cy="275" r="12" fill="#166534" opacity="0.9"/>
+  <path d="M 120 350 Q 130 330 150 340" fill="none" stroke="#166534" stroke-width="6" stroke-linecap="round"/>
+  <path d="M 360 330 Q 370 320 380 330" fill="none" stroke="#166534" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- The Fort on top of the Hill -->
+  <path d="M 200 205 L 200 180 L 210 180 L 210 185 L 220 185 L 220 180 L 230 180 L 230 185 L 240 185 L 240 180 L 250 180 L 250 185 L 260 185 L 260 180 L 270 180 L 270 185 L 280 185 L 280 180 L 290 180 L 290 185 L 300 185 L 300 208 Z" 
+        fill="url(#fortGrad)" stroke="#4b5563" stroke-width="2"/>
+  
+  <!-- Fort Windows/Embrasures -->
+  <rect x="215" y="190" width="6" height="10" rx="2" fill="#1f2937"/>
+  <rect x="235" y="190" width="6" height="10" rx="2" fill="#1f2937"/>
+  <rect x="255" y="190" width="6" height="10" rx="2" fill="#1f2937"/>
+  <rect x="275" y="190" width="6" height="10" rx="2" fill="#1f2937"/>
+
+  <!-- Temple Pillar/Gopuram Silhouette inside the fort -->
+  <path d="M 240 180 L 245 155 L 255 155 L 260 180 Z" fill="#d97706" stroke="#b45309" stroke-width="1"/>
+  <circle cx="250" cy="153" r="3" fill="#f59e0b"/>
+
+  <!-- - TEXT PATHS (TEXT ON CIRCLE) - -->
+
+  <!-- Top Text Path: NAMAKKAL CITY MUNICIPAL CORPORATION -->
+  <path id="textPathTop" d="M 75 250 A 175 175 0 0 1 425 250" fill="none"/>
+  <!-- Bottom Text Path: நாமக்கல் மாநகராட்சி -->
+  <path id="textPathBottom" d="M 425 250 A 175 175 0 0 1 75 250" fill="none"/>
+
+  <text fill="#ffffff" font-family="'Inter', sans-serif" font-size="20" font-weight="800" letter-spacing="3.5">
+    <textPath href="#textPathTop" startOffset="50%" text-anchor="middle">
+      NAMAKKAL CITY MUNICIPAL CORPORATION
+    </textPath>
+  </text>
+
+  <text fill="#f59e0b" font-family="'Inter', sans-serif" font-size="22" font-weight="700" letter-spacing="1">
+    <textPath href="#textPathBottom" startOffset="50%" text-anchor="middle">
+      நாமக்கல் மாநகராட்சி
+    </textPath>
+  </text>
+
+  <!-- Stars on the sides -->
+  <!-- Left Star -->
+  <path d="M 64 250 L 69 243 L 77 243 L 71 248 L 73 256 L 66 251 L 59 256 L 61 248 L 55 243 L 63 243 Z" fill="#ffffff"/>
+  <!-- Right Star -->
+  <path d="M 436 250 L 441 243 L 449 243 L 443 248 L 445 256 L 438 251 L 431 256 L 433 248 L 427 243 L 435 243 Z" fill="#ffffff"/>
+
+</svg>

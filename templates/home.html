@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home | Namakkal City Municipal Corporation PGR{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Responsive styling for Mobile Screens (320px width etc.) */
+    @media (max-width: 576px) {
+        #announcementCarousel .carousel-item {
+            height: auto !important;
+            min-height: 320px !important;
+        }
+        #announcementCarousel .carousel-item > div {
+            padding: 1.5rem 2.5rem 3.5rem 2.5rem !important; /* safe inset from left/right to prevent overlapping arrow buttons */
+        }
+        #announcementCarousel .carousel-item h4 {
+            font-size: 1.1rem !important;
+            font-weight: 700 !important;
+            margin-bottom: 0.5rem !important;
+        }
+        #announcementCarousel .carousel-item p {
+            font-size: 0.82rem !important;
+            line-height: 1.4 !important;
+            margin-bottom: 0.75rem !important;
+        }
+        #announcementCarousel .carousel-item .badge {
+            font-size: 0.75rem !important;
+            padding: 6px 12px !important;
+        }
+        /* Keep control arrows inside the card boundaries on small viewports */
+        #announcementCarousel .carousel-control-prev {
+            left: 5px !important;
+        }
+        #announcementCarousel .carousel-control-next {
+            right: 5px !important;
+        }
+        #announcementCarousel .carousel-control-prev-icon,
+        #announcementCarousel .carousel-control-next-icon {
+            width: 1.75rem !important;
+            height: 1.75rem !important;
+        }
+
+        /* Action Cards (Online Public Grievance, Check Complaint Status, Contact Us) */
+        .action-card {
+            padding: 1.25rem !important; /* reduce padding from p-4 */
+        }
+        .action-card h4 {
+            font-size: 1.2rem !important;
+        }
+        .action-card p {
+            font-size: 0.85rem !important;
+            margin-bottom: 1rem !important;
+        }
+        
+        /* Latest Grievance News section card styling */
+        .col-lg-5 .card-body {
+            padding: 1.25rem 1rem !important; /* reduce card-body padding on mobile */
+        }
+        .col-lg-5 h6 {
+            font-size: 0.95rem !important;
+        }
+        .col-lg-5 p {
+            font-size: 0.8rem !important;
+            line-height: 1.4 !important;
+        }
+        .col-lg-5 .list-group-item {
+            padding-top: 0.75rem !important;
+            padding-bottom: 0.75rem !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Emblem & Gold/Amber Styling -->
+<section class="hero-section rounded-3 mb-5 py-5 px-4 text-center">
+    <div class="container py-2">
+        <div class="row align-items-center justify-content-center">
+            <div class="col-lg-3 col-md-4 col-12 mb-4 mb-md-0">
+                <img src="{% static 'images/logo.png' %}?v=1.3" alt="Namakkal Corporation Emblem" class="img-fluid hero-emblem shadow-sm" style="max-height: 180px;">
+            </div>
+            <div class="col-lg-8 col-md-8 col-12 text-md-start text-center ps-md-4">
+                <span class="badge bg-white text-primary mb-2 px-3 py-2 fw-bold text-uppercase tracking-wider trn" data-en="Public Grievance Redressal" data-ta="பொது மக்கள் குறைதீர்க்கும் தளம்">Public Grievance Redressal</span>
+                <h2 class="display-6 fw-bold mb-3 text-white trn" data-en="Digital Redressal Portal" data-ta="எண்முறை தீர்வு தளம்">Digital Redressal Portal</h2>
+                <p class="lead mb-0 text-white-50 fs-5 trn" data-en="A direct digital link for the residents of Namakkal City to ensure quick and transparent redressing of civic complaints." data-ta="நாமக்கல் மாநகராட்சி குடிமக்களுக்கான நேரடி மின்னணு குறைதீர்க்கும் தளம்.">A direct digital link for the residents of Namakkal City to ensure quick and transparent redressing of civic complaints.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Action Pathways Grid (Blue & White Themed) -->
+<section class="mb-5">
+    <div class="row g-4 justify-content-center">
+        <!-- Pathway 1: Online Public Grievance -->
+        <div class="col-lg-4 col-md-6 col-12">
+            <div class="card action-card h-100 p-4 text-center border-0 shadow-sm">
+                <div class="action-icon-wrapper mx-auto mb-3 bg-amber-soft text-amber">
+                    <i class="fa-solid fa-file-signature fa-2x"></i>
+                </div>
+                <h4 class="fw-bold mb-3 text-amber-dark trn" data-en="Online Public Grievance" data-ta="ஆன்லைன் பொது மக்கள் புகார்">Online Public Grievance</h4>
+                <p class="text-muted mb-4 trn" data-en="Submit your civic issues directly to the municipal authority. Fast & authenticated registration with instant tracking code." data-ta="உங்கள் புகாரை நகராட்சி நிர்வாகத்திற்கு நேரடியாக சமர்ப்பிக்கவும். வேகமான பதிவு மற்றும் உடனடி கண்காணிப்பு குறியீடு.">Submit your civic issues directly to the municipal authority. Fast & authenticated registration with instant tracking code.</p>
+                <div class="mt-auto">
+                    <a href="{% url 'register_complaint' %}" class="btn btn-amber w-100 py-2.5 fw-bold trn" data-en="<i class='fa-solid fa-plus me-2'></i> Submit" data-ta="<i class='fa-solid fa-plus me-2'></i> சமர்ப்பிக்க"><i class="fa-solid fa-plus me-2"></i> Submit</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pathway 2: Check Complaint Status -->
+        <div class="col-lg-4 col-md-6 col-12">
+            <div class="card action-card h-100 p-4 text-center border-0 shadow-sm">
+                <div class="action-icon-wrapper mx-auto mb-3 bg-amber-soft text-amber">
+                    <!-- Gauge / Progress representation (55%) -->
+                    <div class="progress-ring-mini">
+                        <span class="fw-bold">55%</span>
+                    </div>
+                </div>
+                <h4 class="fw-bold mb-3 text-amber-dark trn" data-en="Check Complaint Status" data-ta="புகார் நிலையை சரிபார்க்கவும்">Check Complaint Status</h4>
+                <p class="text-muted mb-4 trn" data-en="Track the real-time resolution progress of your submitted complaints using your registered mobile number or complaint reference ID." data-ta="கைபேசி எண் அல்லது புகார் எண்ணை பயன்படுத்தி புகாரின் தற்போதைய நிலையை உடனுக்குடன் சரிபார்க்கவும்.">Track the real-time resolution progress of your submitted complaints using your registered mobile number or complaint reference ID.</p>
+                <div class="mt-auto">
+                    <a href="{% url 'check_status' %}" class="btn btn-amber-outline w-100 py-2.5 fw-bold trn" data-en="<i class='fa-solid fa-magnifying-glass me-2'></i> Check Status" data-ta="<i class='fa-solid fa-magnifying-glass me-2'></i> நிலையைச் சரிபார்"><i class="fa-solid fa-magnifying-glass me-2"></i> Check Status</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pathway 3: Contact Us -->
+        <div class="col-lg-4 col-md-6 col-12">
+            <div class="card action-card h-100 p-4 text-center border-0 shadow-sm">
+                <div class="action-icon-wrapper mx-auto mb-3 bg-amber-soft text-amber">
+                    <i class="fa-solid fa-headset fa-2x"></i>
+                </div>
+                <h4 class="fw-bold mb-1 text-amber-dark trn" data-en="Contact Us" data-ta="எங்களைத் தொடர்பு கொள்ள">Contact Us</h4>
+                <h5 class="text-amber-hover fw-semibold mb-3">04323 222 951</h5>
+                <p class="text-muted mb-4 trn" data-en="Connect directly with the Namakkal Corporation helpline desk for urgent inquiries or immediate civic assistance." data-ta="அவசர உதவி அல்லது கேள்விகளுக்கு நாமக்கல் மாநகராட்சி உதவி மேசையை நேரடியாக தொடர்பு கொள்ளவும்.">Connect directly with the Namakkal Corporation helpline desk for urgent inquiries or immediate civic assistance.</p>
+                <div class="mt-auto">
+                    <a href="{% url 'contact' %}" class="btn btn-amber-outline w-100 py-2.5 fw-bold trn" data-en="<i class='fa-solid fa-phone me-2'></i> 04323 222 951" data-ta="<i class='fa-solid fa-phone me-2'></i> 04323 222 951"><i class="fa-solid fa-phone me-2"></i> 04323 222 951</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- News & Announcements -->
+<div class="row g-4 mb-5">
+    <!-- Announcements Carousel -->
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-primary text-white py-3 fw-bold trn" data-en="<i class='fa-solid fa-bullhorn me-2 text-white'></i> Announcements & Updates" data-ta="<i class='fa-solid fa-bullhorn me-2 text-white'></i> அறிவிப்புகள் & செய்திகள்">
+                <i class="fa-solid fa-bullhorn me-2 text-white"></i> Announcements & Updates
+            </div>
+            <div class="card-body p-0">
+                <div id="announcementCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#announcementCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+                        <button type="button" data-bs-target="#announcementCarousel" data-bs-slide-to="1"></button>
+                        <button type="button" data-bs-target="#announcementCarousel" data-bs-slide-to="2"></button>
+                    </div>
+                    <div class="carousel-inner">
+                        <div class="carousel-item active" style="height: 280px; background-color: #eff6ff;">
+                            <div class="p-5 d-flex flex-column justify-content-center h-100">
+                                <h4 class="fw-bold text-primary trn" data-en="Namakkal Corporation Cleanliness Campaign" data-ta="நாமக்கல் மாநகராட்சி தூய்மை பிரச்சாரம்">Namakkal Corporation Cleanliness Campaign</h4>
+                                <p class="text-muted trn" data-en="Namakkal Municipal Corporation has initiated a dedicated cleanliness campaign across Wards 1 to 15. Report garbage collection delays to help us keep the city clean." data-ta="நாமக்கல் மாநகராட்சி 1 முதல் 15 வரையிலான வார்டுகளில் சிறப்பு தூய்மைப் பணியை தொடங்கியுள்ளது. குப்பைகள் சேகரிப்பதில் தாமதம் இருந்தால் எங்களுக்கு தெரிவிக்கவும்.">Namakkal Municipal Corporation has initiated a dedicated cleanliness campaign across Wards 1 to 15. Report garbage collection delays to help us keep the city clean.</p>
+                                <span class="badge bg-primary align-self-start py-2 px-3 text-white"><span class="trn" data-en="Date: July 2026" data-ta="தேதி: ஜூலை 2026">Date: July 2026</span></span>
+                            </div>
+                        </div>
+                        <div class="carousel-item" style="height: 280px; background-color: #eff6ff;">
+                            <div class="p-5 d-flex flex-column justify-content-center h-100">
+                                <h4 class="fw-bold text-primary trn" data-en="Drinking Water Supply Scheduling Update" data-ta="குடிநீர் விநியோக கால அட்டவணை மாற்றம்">Drinking Water Supply Scheduling Update</h4>
+                                <p class="text-muted trn" data-en="Drinking water supply timing is updated. Please check the new timings on the official urban local bodies website or register water supply issues directly on this portal." data-ta="குடிநீர் விநியோக நேரங்கள் மாற்றியமைக்கப்பட்டுள்ளன. புதிய நேரங்களை நகர்ப்புற உள்ளாட்சி அமைப்புகளின் இணையதளத்தில் பார்க்கவும் அல்லது புகாரை இப்பதிவேட்டில் பதியவும்.">Drinking water supply timing is updated. Please check the new timings on the official urban local bodies website or register water supply issues directly on this portal.</p>
+                                <span class="badge bg-primary align-self-start py-2 px-3 text-white"><span class="trn" data-en="Date: July 2026" data-ta="தேதி: ஜூலை 2026">Date: July 2026</span></span>
+                            </div>
+                        </div>
+                        <div class="carousel-item" style="height: 280px; background-color: #eff6ff;">
+                            <div class="p-5 d-flex flex-column justify-content-center h-100">
+                                <h4 class="fw-bold text-primary trn" data-en="Pothole Repair & Road Restoration Phase II" data-ta="சாலை சீரமைப்பு பணிகள் இரண்டாம் கட்டம்">Pothole Repair & Road Restoration Phase II</h4>
+                                <p class="text-muted trn" data-en="Restoration works for central city main roads and surrounding wards are currently ongoing. Citizens are requested to upload road damage details on our portal." data-ta="மத்திய மாநகர சாலைகள் மற்றும் சுற்றுவட்டார வார்டுகளின் சாலைகளை சீரமைக்கும் பணிகள் தற்போது நடைபெற்று வருகின்றன. பழுதடைந்த சாலை விபரங்களை இங்கே பதிவேற்றவும்.">Restoration works for central city main roads and surrounding wards are currently ongoing. Citizens are requested to upload road damage details on our portal.</p>
+                                <span class="badge bg-primary align-self-start py-2 px-3 text-white"><span class="trn" data-en="Date: July 2026" data-ta="தேதி: ஜூலை 2026">Date: July 2026</span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#announcementCarousel" data-bs-slide="prev" style="left: -4%;">
+                        <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                        <span class="visually-hidden trn" data-en="Previous" data-ta="முந்தையது">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#announcementCarousel" data-bs-slide="next" style="right: -3%;">
+                        <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                        <span class="visually-hidden trn" data-en="Next" data-ta="அடுத்தது">Next</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Latest News -->
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-primary text-white py-3 fw-bold trn" data-en="<i class='fa-solid fa-newspaper me-2 text-white'></i> Latest Grievance News" data-ta="<i class='fa-solid fa-newspaper me-2 text-white'></i> சமீபத்திய செய்திகள்">
+                <i class="fa-solid fa-newspaper me-2 text-white"></i> Latest Grievance News
+            </div>
+            <div class="card-body p-4">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item px-0 py-3">
+                        <span class="badge bg-primary mb-2 text-white trn" data-en="New" data-ta="புதியது">New</span>
+                        <h6 class="fw-bold m-0"><a href="#" class="text-decoration-none text-primary trn" data-en="Namakkal PGR Mobile Application Launched" data-ta="நாமக்கல் PGR கைபேசி செயலி அறிமுகம்">Namakkal PGR Mobile Application Launched</a></h6>
+                        <p class="small text-muted m-0 trn" data-en="Citizens can now register and track grievances via mobile app. Available in Google Play Store." data-ta="குடிமக்கள் கைபேசி செயலி மூலமாக புகார்களைப் பதிவு செய்து கண்காணிக்கலாம். கூகுள் ப்ளே ஸ்டோரில் கிடைக்கிறது.">Citizens can now register and track grievances via mobile app. Available in Google Play Store.</p>
+                    </li>
+                    <li class="list-group-item px-0 py-3">
+                        <h6 class="fw-bold m-0"><a href="#" class="text-decoration-none text-primary trn" data-en="Resolved: Widespread Streetlight Restorations" data-ta="தீர்வு: தெருவிளக்குகள் சீரமைப்பு">Resolved: Widespread Streetlight Restorations</a></h6>
+                        <p class="small text-muted m-0 trn" data-en="More than 250 defunct streetlights in Ward 8 and Ward 9 have been successfully restored within 48 hours." data-ta="வார்டு 8 மற்றும் வார்டு 9ல் 250க்கும் மேற்பட்ட பழுதடைந்த தெருவிளக்குகள் 48 மணி நேரத்தில் வெற்றிகரமாக சரி செய்யப்பட்டன.">More than 250 defunct streetlights in Ward 8 and Ward 9 have been successfully restored within 48 hours.</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

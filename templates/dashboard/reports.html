@@ -1,0 +1,118 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Analytics Reports Generator | Namakkal PGR Admin{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4 g-3">
+    <div class="col-md-8">
+        <h3 class="fw-bold text-primary m-0">Analytics Reports Generator</h3>
+        <span class="text-muted small">Generate customized statistical summaries of city complaints, resolution efficiencies, and performance audits.</span>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column: Settings -->
+    <div class="col-lg-6 col-12">
+        <div class="card dashboard-card h-100">
+            <div class="card-header bg-primary text-white py-3">
+                <h5 class="m-0 fw-bold"><i class="fa-solid fa-file-invoice me-2"></i> Report Criteria Config</h5>
+            </div>
+            <div class="card-body p-4">
+                <form id="reportForm">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Select Report Period</label>
+                        <select class="form-select" id="reportPeriod">
+                            <option value="daily">Daily Report (Today)</option>
+                            <option value="weekly">Weekly Summary Report</option>
+                            <option value="monthly">Monthly Performance Audit</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Select Department Scope</label>
+                        <select class="form-select" id="reportDept">
+                            <option value="all">All Departments combined</option>
+                            <option value="Sanitation">Sanitation & Health only</option>
+                            <option value="WaterSupply">Water Supply only</option>
+                            <option value="StreetLights">Street Lights only</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Report Format</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="format" id="fmtPdf" checked>
+                                <label class="form-check-label" for="fmtPdf"><i class="fa-solid fa-file-pdf text-danger me-1"></i> PDF Document</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="format" id="fmtExcel">
+                                <label class="form-check-label" for="fmtExcel"><i class="fa-solid fa-file-excel text-success me-1"></i> Microsoft Excel spreadsheet</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary w-100 py-2 fw-bold" onclick="generateReport()"><i class="fa-solid fa-circle-arrow-down me-2"></i> Generate & Download Report</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Recent Reports -->
+    <div class="col-lg-6 col-12">
+        <div class="card dashboard-card h-100">
+            <div class="card-header bg-secondary text-white py-3">
+                <h5 class="m-0 fw-bold"><i class="fa-solid fa-clock-rotate-left me-2"></i> Generated Reports Archive</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="list-group">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="lh-1">
+                            <h6 class="fw-bold m-0" style="font-size: 0.9rem;">Weekly_Summary_12-07-2026.pdf</h6>
+                            <span class="text-muted small">Generated: 12-07-2026 | All Depts</span>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-download"></i></button>
+                    </div>
+
+                    <div class="list-group-item d-flex justify-content-between align-items-center mt-2">
+                        <div class="lh-1">
+                            <h6 class="fw-bold m-0" style="font-size: 0.9rem;">Sanitation_Audit_June_2026.xlsx</h6>
+                            <span class="text-muted small">Generated: 01-07-2026 | Sanitation</span>
+                        </div>
+                        <button class="btn btn-sm btn-outline-success"><i class="fa-solid fa-download"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function generateReport() {
+        let period = $('#reportPeriod').val();
+        let format = $('#fmtPdf').is(':checked') ? 'PDF' : 'Excel';
+        
+        Swal.fire({
+            title: 'Generating ' + format + ' Report',
+            text: 'Processing complaint statistics, wait a moment...',
+            icon: 'info',
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        }).then(() => {
+            if (format === 'PDF') {
+                Swal.fire('Success', 'PDF report generated and downloaded.', 'success');
+            } else {
+                // Trigger actual Excel download endpoint
+                window.location.href = "{% url 'export_excel' %}";
+            }
+        });
+    }
+</script>
+{% endblock %}

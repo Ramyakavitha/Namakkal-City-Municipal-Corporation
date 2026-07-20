@@ -1,0 +1,222 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Agent Accounts | Namakkal PGR Admin{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4 g-3">
+    <div class="col-md-7">
+        <h3 class="fw-bold text-primary m-0">Agent Accounts</h3>
+        <span class="text-muted small">Manage agent accounts for the system</span>
+    </div>
+    <div class="col-md-5 text-md-end">
+        <button class="btn btn-primary" id="btnCreateAgent"><i class="fa-solid fa-user-plus me-1"></i> Create Agent</button>
+    </div>
+</div>
+
+<!-- Search controls -->
+<div class="card dashboard-card mb-4">
+    <div class="card-body p-3">
+        <div class="input-group">
+            <span class="input-group-text bg-light border-end-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <input type="text" class="form-control border-start-0 bg-light" id="agentSearch" placeholder="Search by Username or Agent ID...">
+        </div>
+    </div>
+</div>
+
+<!-- Agent Cards Grid -->
+<div class="row g-3" id="agentsGrid">
+    <!-- Anandakumar (Static Prepopulated Card matching user request) -->
+    <div class="col-xl-4 col-md-6 col-12 agent-card-item">
+        <div class="card dashboard-card p-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="avatar bg-info text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 55px; height: 55px; font-size: 1.5rem;">
+                    R
+                </div>
+                <div class="lh-1">
+                    <h5 class="fw-bold text-dark m-0">R. Anandakumar</h5>
+                    <span class="text-muted small">Agent ID: No Agent ID</span>
+                </div>
+            </div>
+            <div class="mb-3 small">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="text-secondary fw-semibold">Mobile</span>
+                    <span class="fw-bold text-dark">9791655814</span>
+                </div>
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="text-secondary fw-semibold">Role</span>
+                    <span class="badge bg-light text-primary fw-bold">Helper</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="text-secondary fw-semibold">Status</span>
+                    <span class="badge bg-success status-indicator">Active</span>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-primary flex-grow-1" onclick="editAgent('R. Anandakumar', '9791655814', 'Helper')">Edit</button>
+                <button class="btn btn-sm btn-outline-danger flex-grow-1 btn-deactivate" onclick="toggleAgentStatus(this)">Deactivate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Officers dynamically loaded from DB -->
+    {% for officer in officers %}
+    <div class="col-xl-4 col-md-6 col-12 agent-card-item">
+        <div class="card dashboard-card p-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 55px; height: 55px; font-size: 1.5rem;">
+                    {{ officer.name|slice:":1"|upper }}
+                </div>
+                <div class="lh-1">
+                    <h5 class="fw-bold text-dark m-0">{{ officer.name }}</h5>
+                    <span class="text-muted small">Agent ID: AGENT-{{ officer.id }}</span>
+                </div>
+            </div>
+            <div class="mb-3 small">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="text-secondary fw-semibold">Mobile</span>
+                    <span class="fw-bold text-dark">{{ officer.mobile }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="text-secondary fw-semibold">Role</span>
+                    <span class="badge bg-light text-primary fw-bold">{{ officer.get_department_display }}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="text-secondary fw-semibold">Status</span>
+                    <span class="badge bg-success status-indicator">Active</span>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-primary flex-grow-1" onclick="editAgent('{{ officer.name }}', '{{ officer.mobile }}', '{{ officer.get_department_display }}')">Edit</button>
+                <button class="btn btn-sm btn-outline-danger flex-grow-1 btn-deactivate" onclick="toggleAgentStatus(this)">Deactivate</button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleAgentStatus(btn) {
+        let card = $(btn).closest('.card');
+        let indicator = card.find('.status-indicator');
+        if (indicator.text() === 'Active') {
+            indicator.text('Inactive').removeClass('bg-success').addClass('bg-secondary');
+            $(btn).text('Activate').removeClass('btn-outline-danger').addClass('btn-outline-success');
+            Swal.fire('Deactivated', 'Agent account deactivated.', 'success');
+        } else {
+            indicator.text('Active').removeClass('bg-secondary').addClass('bg-success');
+            $(btn).text('Deactivate').removeClass('btn-outline-success').addClass('btn-outline-danger');
+            Swal.fire('Activated', 'Agent account activated.', 'success');
+        }
+    }
+
+    function editAgent(name, mobile, role) {
+        Swal.fire({
+            title: 'Edit Agent Account',
+            html: `
+                <div class="text-start">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Full Name</label>
+                        <input type="text" class="form-control" value="${name}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Mobile Number</label>
+                        <input type="text" class="form-control" value="${mobile}">
+                    </div>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Save Changes'
+        });
+    }
+
+    $(document).ready(function() {
+        // Live search filter
+        $('#agentSearch').on('keyup', function() {
+            let val = $(this).val().toLowerCase();
+            $('.agent-card-item').each(function() {
+                let name = $(this).find('h5').text().toLowerCase();
+                let details = $(this).text().toLowerCase();
+                if (name.includes(val) || details.includes(val)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+
+        $('#btnCreateAgent').click(function() {
+            Swal.fire({
+                title: 'Create Agent Account',
+                html: `
+                    <div class="text-start">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Full Name</label>
+                            <input type="text" class="form-control" id="newAgentName" placeholder="e.g. R. Anandakumar" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Mobile Number</label>
+                            <input type="text" class="form-control" id="newAgentMobile" placeholder="e.g. 9791655814" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Role</label>
+                            <select class="form-select" id="newAgentRole">
+                                <option>Helper</option>
+                                <option>Nodal Officer</option>
+                                <option>Administrator</option>
+                            </select>
+                        </div>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Create Agent'
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    let name = $('#newAgentName').val();
+                    let mobile = $('#newAgentMobile').val();
+                    let role = $('#newAgentRole').val();
+                    let firstLetter = name ? name.charAt(0).toUpperCase() : 'A';
+
+                    let newCard = `
+                        <div class="col-xl-4 col-md-6 col-12 agent-card-item">
+                            <div class="card dashboard-card p-4">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <div class="avatar bg-info text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 55px; height: 55px; font-size: 1.5rem;">
+                                        ${firstLetter}
+                                    </div>
+                                    <div class="lh-1">
+                                        <h5 class="fw-bold text-dark m-0">${name}</h5>
+                                        <span class="text-muted small">Agent ID: No Agent ID</span>
+                                    </div>
+                                </div>
+                                <div class="mb-3 small">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="text-secondary fw-semibold">Mobile</span>
+                                        <span class="fw-bold text-dark">${mobile}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="text-secondary fw-semibold">Role</span>
+                                        <span class="badge bg-light text-primary fw-bold">${role}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-secondary fw-semibold">Status</span>
+                                        <span class="badge bg-success status-indicator">Active</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-outline-primary flex-grow-1" onclick="editAgent('${name}', '${mobile}', '${role}')">Edit</button>
+                                    <button class="btn btn-sm btn-outline-danger flex-grow-1 btn-deactivate" onclick="toggleAgentStatus(this)">Deactivate</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    $('#agentsGrid').prepend(newCard);
+                    Swal.fire('Created', 'Agent account has been successfully created.', 'success');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,133 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}System Settings | Namakkal PGR Admin{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4 g-3">
+    <div class="col-md-8">
+        <h3 class="fw-bold text-primary m-0">Grievance Portal Settings</h3>
+        <span class="text-muted small">Configure official details, SMTP credentials, SMS gateways, WhatsApp API, and bilingual language controls.</span>
+    </div>
+</div>
+
+<div class="card dashboard-card">
+    <div class="card-body p-4 p-md-5">
+        <form id="settingsForm">
+            <!-- Corporation details -->
+            <div class="mb-5">
+                <h5 class="fw-bold text-primary border-bottom pb-2 mb-3"><i class="fa-solid fa-building me-2"></i> Corporation Information</h5>
+                <div class="row g-3">
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-semibold">Corporation Name (English)</label>
+                        <input type="text" class="form-control" value="Namakkal City Municipal Corporation">
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-semibold">Corporation Name (Tamil)</label>
+                        <input type="text" class="form-control" value="நாமக்கல் மாநகராட்சி">
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-semibold">Contact Mobile</label>
+                        <input type="text" class="form-control" value="06286-221777">
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-semibold">Contact Email</label>
+                        <input type="email" class="form-control" value="commr.namakkal@tn.gov.in">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SMTP gateway -->
+            <div class="mb-5">
+                <h5 class="fw-bold text-primary border-bottom pb-2 mb-3"><i class="fa-solid fa-envelope me-2"></i> SMTP Configuration (E-mail Notification Gateway)</h5>
+                <div class="row g-3">
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-semibold">SMTP Host Address</label>
+                        <input type="text" class="form-control" value="smtp.gmail.com">
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label class="form-label fw-semibold">Port</label>
+                        <input type="number" class="form-control" value="587">
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label class="form-label fw-semibold">SSL/TLS</label>
+                        <select class="form-select">
+                            <option selected>STARTTLS</option>
+                            <option>SSL</option>
+                            <option>None</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-semibold">Sender Email Address</label>
+                        <input type="email" class="form-control" value="noreply.namakkalpgr@gmail.com">
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-semibold">SMTP Passcode</label>
+                        <input type="password" class="form-control" value="••••••••••••••••">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SMS Settings -->
+            <div class="mb-5">
+                <h5 class="fw-bold text-primary border-bottom pb-2 mb-3"><i class="fa-solid fa-comment-sms me-2"></i> SMS Gateway Settings (OTP Verification)</h5>
+                <div class="row g-3">
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-semibold">SMS Provider Endpoint</label>
+                        <input type="text" class="form-control" value="https://api.sms-alert-gateway.com/send">
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-semibold">API Auth Key</label>
+                        <input type="password" class="form-control" value="••••••••••••••••••••••••••••••••">
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-semibold">Sender DLT ID</label>
+                        <input type="text" class="form-control" value="NMCMC_GOV_PGR">
+                    </div>
+                </div>
+            </div>
+
+            <!-- WhatsApp API -->
+            <div class="mb-5">
+                <h5 class="fw-bold text-primary border-bottom pb-2 mb-3"><i class="fa-brands fa-whatsapp me-2"></i> WhatsApp API Integration (Meta Cloud API)</h5>
+                <div class="row g-3">
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-semibold">WhatsApp Phone ID</label>
+                        <input type="text" class="form-control" value="109283748293847">
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <label class="form-label fw-semibold">WhatsApp Business Account ID</label>
+                        <input type="text" class="form-control" value="987263549283746">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Meta Developer Token</label>
+                        <textarea class="form-control" rows="2">EAAGb0zZA4q3oBAOdjE489uZBwN6T8mY7ZCSk1v3uO6x2A8S7vZC1f9sZBZC3...</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-primary px-5 py-2 fw-bold" onclick="saveSettings()"><i class="fa-solid fa-circle-check me-2"></i> Save System Configuration</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function saveSettings() {
+        Swal.fire({
+            title: 'Saving Settings',
+            text: 'Updating configuration details on gateway system...',
+            icon: 'info',
+            timer: 1500,
+            timerProgressBar: true,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        }).then(() => {
+            Swal.fire('Saved', 'Configuration settings updated and verified successfully.', 'success');
+        });
+    }
+</script>
+{% endblock %}

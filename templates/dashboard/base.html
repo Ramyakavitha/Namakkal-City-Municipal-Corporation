@@ -1,0 +1,290 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Namakkal Municipal Corporation Admin Portal{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary-color: #1e4a8a; /* Royal/medium blue primary */
+            --secondary-color: #3b82f6; /* Blue secondary */
+            --success-color: #2E7D32;
+            --warning-color: #F9A825;
+            --danger-color: #D32F2F;
+            --bg-color: #eff6ff; /* Light blue background */
+            --card-bg: #FFFFFF;
+            --text-color: #0F172A;
+            --border-color: #dbeafe;
+            --sidebar-width: 260px;
+        }
+
+        body.dark-mode {
+            --bg-color: #0f172a; /* Deep blue dark background */
+            --card-bg: #1e293b; /* Dark card background */
+            --text-color: #f1f5f9;
+            --border-color: #334155;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        /* Sidebar Styling */
+        #sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: var(--primary-color); /* Blue sidebar */
+            color: white;
+            z-index: 1000;
+            transition: all 0.3s;
+            overflow-y: auto;
+        }
+
+        #sidebar.collapsed {
+            margin-left: calc(-1 * var(--sidebar-width));
+        }
+
+        #sidebar .sidebar-header {
+            padding: 20px;
+            background-color: #1e4a8a; /* Theme blue sidebar header */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            border-radius: 0;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        #sidebar .nav-link:hover, #sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left: 4px solid var(--warning-color);
+        }
+
+        #sidebar .nav-link i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        /* Main Content wrapper */
+        #content-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: all 0.3s;
+        }
+
+        #content-wrapper.expanded {
+            margin-left: 0;
+        }
+
+        /* Top Navbar */
+        .admin-navbar {
+            background-color: var(--card-bg) !important;
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 30px;
+        }
+
+        /* Loading Spinner */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        body.dark-mode #loading-overlay {
+            background: rgba(18, 18, 18, 0.85);
+        }
+
+        .dashboard-card {
+            background-color: var(--card-bg) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            color: var(--text-color) !important;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.06);
+        }
+
+        .theme-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* Bootstrap Overrides to match primary theme color #1e4a8a */
+        .text-primary {
+            color: #1e4a8a !important;
+        }
+        .bg-primary {
+            background-color: #1e4a8a !important;
+        }
+        .btn-primary {
+            background-color: #1e4a8a !important;
+            border-color: #1e4a8a !important;
+        }
+        .btn-primary:hover {
+            background-color: #163666 !important;
+            border-color: #122d56 !important;
+        }
+        .bg-success {
+            background-color: #000000 !important;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Loader -->
+    <div id="loading-overlay">
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+            <h5 class="mt-3 fw-bold">Loading Admin Panel...</h5>
+        </div>
+    </div>
+
+    <!-- LEFT SIDEBAR -->
+    <div id="sidebar">
+        <div class="sidebar-header d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+                <img src="{% static 'images/namakkal_emblem.svg' %}" alt="TN Logo" style="height: 35px; width: 35px; filter: brightness(0) invert(1);">
+                <div class="lh-1">
+                    <span class="fw-bold d-block small">Namakkal Municipal</span>
+                    <span class="text-warning fw-bold small" style="font-size: 0.75rem;">Corporation</span>
+                </div>
+            </div>
+            <button class="btn btn-sm text-white d-md-none" id="sidebarCollapseMobile"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="py-3">
+            <a href="{% url 'dashboard_index' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard_index' %}active{% endif %}">
+                <i class="fa-solid fa-chart-line"></i> Dashboard Overview
+            </a>
+            <a href="{% url 'dashboard_complaints' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard_complaints' %}active{% endif %}">
+                <i class="fa-solid fa-list-check"></i> Complaints
+            </a>
+            <a href="{% url 'dashboard_register_complaint' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard_register_complaint' %}active{% endif %}">
+                <i class="fa-solid fa-square-plus"></i> Register Complaint
+            </a>
+            <a href="{% url 'dashboard_conversations' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard_conversations' %}active{% endif %}">
+                <i class="fa-solid fa-comments"></i> Conversations
+            </a>
+            <a href="{% url 'dashboard_template_status' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard_template_status' %}active{% endif %}">
+                <i class="fa-solid fa-circle-check"></i> Template Status
+            </a>
+            <a href="{% url 'dashboard_template_manager' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard_template_manager' %}active{% endif %}">
+                <i class="fa-solid fa-sliders"></i> Template Manager
+            </a>
+            <a href="{% url 'dashboard_campaigns' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard_campaigns' %}active{% endif %}">
+                <i class="fa-solid fa-paper-plane"></i> Campaigns
+            </a>
+            <a href="{% url 'dashboard_departments' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard_departments' %}active{% endif %}">
+                <i class="fa-solid fa-sitemap"></i> Departments
+            </a>
+            <a href="{% url 'dashboard_agent_accounts' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard_agent_accounts' %}active{% endif %}">
+                <i class="fa-solid fa-users-gear"></i> Agent Accounts
+            </a>
+            <a href="{% url 'dashboard_news' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard_news' %}active{% endif %}">
+                <i class="fa-solid fa-newspaper"></i> News & Announcements
+            </a>
+            <hr class="border-secondary mx-3">
+            <a href="{% url 'dashboard_logout' %}" class="nav-link text-danger">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- CONTENT WRAPPER -->
+    <div id="content-wrapper">
+
+
+        <!-- Django Messages System -->
+        {% if messages %}
+        <div class="container-fluid mt-3 px-4">
+            {% for msg in messages %}
+            <div class="alert alert-{{ msg.tags }} alert-dismissible fade show" role="alert">
+                {{ msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- PAGE MAIN CONTENT -->
+        <div class="container-fluid p-4">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Hide loading spinner
+            $('#loading-overlay').fadeOut(400);
+
+            // Sidebar collapse logic
+            $('#sidebarCollapse').click(function() {
+                $('#sidebar').toggleClass('collapsed');
+                $('#content-wrapper').toggleClass('expanded');
+            });
+            $('#sidebarCollapseMobile').click(function() {
+                $('#sidebar').addClass('collapsed');
+                $('#content-wrapper').addClass('expanded');
+            });
+
+            // Dark Mode Toggler
+            const themeToggler = $('#themeToggler');
+            if (localStorage.getItem('adminTheme') === 'dark') {
+                $('body').addClass('dark-mode');
+                themeToggler.html('<i class="fa-solid fa-sun"></i>');
+            }
+            themeToggler.click(function() {
+                $('body').toggleClass('dark-mode');
+                if ($('body').hasClass('dark-mode')) {
+                    localStorage.setItem('adminTheme', 'dark');
+                    $(this).html('<i class="fa-solid fa-sun"></i>');
+                } else {
+                    localStorage.setItem('adminTheme', 'light');
+                    $(this).html('<i class="fa-solid fa-moon"></i>');
+                }
+            });
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,306 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard Overview | Namakkal PGR Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Styling specifically for the summary widgets */
+    .summary-card {
+        position: relative;
+        overflow: hidden;
+        border-left: 5px solid var(--primary-color) !important;
+    }
+    .summary-card.pending { border-left-color: var(--warning-color) !important; }
+    .summary-card.in-progress { border-left-color: var(--secondary-color) !important; }
+    .summary-card.resolved { border-left-color: var(--success-color) !important; }
+    .summary-card.closed { border-left-color: var(--primary-color) !important; }
+    .summary-card.rejected { border-left-color: var(--danger-color) !important; }
+    .summary-card.reopened { border-left-color: #673AB7 !important; }
+    .summary-card.today { border-left-color: #E91E63 !important; }
+
+    .summary-card .icon-wrapper {
+        position: absolute;
+        right: 15px;
+        bottom: 10px;
+        font-size: 3.5rem;
+        opacity: 0.15;
+    }
+
+    .activity-timeline {
+        border-left: 2px solid var(--border-color);
+        padding-left: 20px;
+        position: relative;
+    }
+    .activity-timeline-item {
+        position: relative;
+        margin-bottom: 20px;
+    }
+    .activity-timeline-item::before {
+        content: "";
+        width: 12px;
+        height: 12px;
+        background: var(--secondary-color);
+        border: 2px solid var(--card-bg);
+        border-radius: 50%;
+        position: absolute;
+        left: -27px;
+        top: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Welcome & Status Banner -->
+<div class="row align-items-center mb-4 g-3">
+    <div class="col-md-7">
+        <h3 class="fw-bold text-primary">Dashboard Overview</h3>
+    </div>
+    <div class="col-md-5 text-md-end">
+        <span class="badge bg-success px-3 py-2"><i class="fa-solid fa-signal me-1"></i> Live Real-Time Feed</span>
+    </div>
+</div>
+
+<!-- SUMMARY CARDS -->
+<div class="row g-3 mb-4">
+    <!-- Total -->
+    <div class="col-xl-3 col-md-6 col-12">
+        <div class="card dashboard-card summary-card p-3 h-100">
+            <span class="text-uppercase text-muted small fw-bold">Total Complaints</span>
+            <h2 class="fw-bold my-2 text-primary counter" data-target="{{ total_count }}">0</h2>
+            <div class="small text-muted">
+                <span class="text-success fw-bold"><i class="fa-solid fa-arrow-trend-up"></i> +5.2%</span> from last month
+            </div>
+            <div class="icon-wrapper text-primary"><i class="fa-solid fa-folder-open"></i></div>
+        </div>
+    </div>
+    <!-- Today -->
+    <div class="col-xl-3 col-md-6 col-12">
+        <div class="card dashboard-card summary-card today p-3 h-100">
+            <span class="text-uppercase text-muted small fw-bold">Today's Complaints</span>
+            <h2 class="fw-bold my-2 text-primary counter" data-target="{{ today_count }}">0</h2>
+            <div class="small text-muted">
+                <span class="text-danger fw-bold"><i class="fa-solid fa-arrow-trend-up"></i> +1.8%</span> from yesterday
+            </div>
+            <div class="icon-wrapper" style="color: #E91E63;"><i class="fa-solid fa-calendar-day"></i></div>
+        </div>
+    </div>
+    <!-- Pending -->
+    <div class="col-xl-3 col-md-6 col-12">
+        <div class="card dashboard-card summary-card pending p-3 h-100">
+            <span class="text-uppercase text-muted small fw-bold">Pending Complaints</span>
+            <h2 class="fw-bold my-2 text-warning counter" data-target="{{ pending_count }}">0</h2>
+            <div class="small text-muted">
+                <span class="text-success fw-bold"><i class="fa-solid fa-arrow-trend-down"></i> -3.4%</span> outstanding backlog
+            </div>
+            <div class="icon-wrapper text-warning"><i class="fa-solid fa-clock"></i></div>
+        </div>
+    </div>
+    <!-- In Progress -->
+    <div class="col-xl-3 col-md-6 col-12">
+        <div class="card dashboard-card summary-card in-progress p-3 h-100">
+            <span class="text-uppercase text-muted small fw-bold">In Progress</span>
+            <h2 class="fw-bold my-2 text-info counter" data-target="{{ in_progress_count }}">0</h2>
+            <div class="small text-muted">
+                <span class="text-info fw-bold"><i class="fa-solid fa-arrows-spin fa-spin"></i> Active</span> under investigation
+            </div>
+            <div class="icon-wrapper text-info"><i class="fa-solid fa-spinner"></i></div>
+        </div>
+    </div>
+    <!-- Resolved -->
+    <div class="col-xl-3 col-md-6 col-12">
+        <div class="card dashboard-card summary-card resolved p-3 h-100">
+            <span class="text-uppercase text-muted small fw-bold">Resolved</span>
+            <h2 class="fw-bold my-2 text-success counter" data-target="{{ resolved_count }}">0</h2>
+            <div class="small text-muted">
+                <span class="text-success fw-bold"><i class="fa-solid fa-circle-check"></i> 88%</span> resolution rate
+            </div>
+            <div class="icon-wrapper text-success"><i class="fa-solid fa-check-circle"></i></div>
+        </div>
+    </div>
+    <!-- Closed -->
+    <div class="col-xl-3 col-md-6 col-12">
+        <div class="card dashboard-card summary-card closed p-3 h-100">
+            <span class="text-uppercase text-muted small fw-bold">Closed</span>
+            <h2 class="fw-bold my-2 text-primary counter" data-target="{{ closed_count }}">0</h2>
+            <div class="small text-muted">
+                <span><i class="fa-solid fa-lock"></i> Verified closed</span>
+            </div>
+            <div class="icon-wrapper text-primary"><i class="fa-solid fa-box-archive"></i></div>
+        </div>
+    </div>
+    <!-- Rejected -->
+    <div class="col-xl-3 col-md-6 col-12">
+        <div class="card dashboard-card summary-card rejected p-3 h-100">
+            <span class="text-uppercase text-muted small fw-bold">Rejected</span>
+            <h2 class="fw-bold my-2 text-danger counter" data-target="{{ rejected_count }}">0</h2>
+            <div class="small text-muted">
+                <span class="text-danger fw-bold"><i class="fa-solid fa-ban"></i> Invalid info</span>
+            </div>
+            <div class="icon-wrapper text-danger"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        </div>
+    </div>
+    <!-- Reopened -->
+    <div class="col-xl-3 col-md-6 col-12">
+        <div class="card dashboard-card summary-card reopened p-3 h-100">
+            <span class="text-uppercase text-muted small fw-bold">Reopened</span>
+            <h2 class="fw-bold my-2 counter" data-target="{{ reopened_count }}" style="color: #673AB7;">0</h2>
+            <div class="small text-muted">
+                <span class="fw-bold" style="color: #673AB7;"><i class="fa-solid fa-rotate-left"></i> Escalated</span>
+            </div>
+            <div class="icon-wrapper" style="color: #673AB7;"><i class="fa-solid fa-rotate-left"></i></div>
+        </div>
+    </div>
+</div>
+
+<!-- CHARTS & TRENDS -->
+<div class="row g-4 mb-4">
+    <!-- Monthly Complaint Trend -->
+    <div class="col-lg-12">
+        <div class="card dashboard-card p-4 h-100">
+            <h6 class="fw-bold text-primary mb-3"><i class="fa-solid fa-chart-line me-2 text-success"></i> Monthly Complaint Trend</h6>
+            <div style="height: 300px;"><canvas id="monthlyTrendChart"></canvas></div>
+        </div>
+    </div>
+</div>
+
+<!-- CATEGORY WISE COMPLAINTS -->
+<div class="card dashboard-card p-4 mb-4">
+    <h5 class="fw-bold text-primary mb-4"><i class="fa-solid fa-tags me-2 text-success"></i> Category-wise Grievance Stats</h5>
+    <div class="row g-3">
+        {% for cat_name, stats in category_stats.items %}
+        <div class="col-xl-3 col-md-6 col-12">
+            <div class="card bg-light border-0 p-3 h-100 dashboard-card shadow-none">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-bold text-dark">
+                        {% if cat_name == 'Road Damage' %}<i class="fa-solid fa-road text-primary me-2"></i>
+                        {% elif cat_name == 'Street Lights' %}<i class="fa-solid fa-lightbulb text-warning me-2"></i>
+                        {% elif cat_name == 'Garbage Collection' %}<i class="fa-solid fa-trash text-success me-2"></i>
+                        {% elif cat_name == 'Water Supply' %}<i class="fa-solid fa-droplet text-info me-2"></i>
+                        {% elif cat_name == 'Drainage' %}<i class="fa-solid fa-water text-primary me-2"></i>
+                        {% elif cat_name == 'Sewage' %}<i class="fa-solid fa-toilet text-dark me-2"></i>
+                        {% elif cat_name == 'Public Health' %}<i class="fa-solid fa-heart-pulse text-danger me-2"></i>
+                        {% elif cat_name == 'Mosquito Control' %}<i class="fa-solid fa-bug text-secondary me-2"></i>
+                        {% elif cat_name == 'Stray Dogs' %}<i class="fa-solid fa-dog text-warning me-2"></i>
+                        {% elif cat_name == 'Building Issues' %}<i class="fa-solid fa-building text-primary me-2"></i>
+                        {% elif cat_name == 'Parks' %}<i class="fa-solid fa-tree text-success me-2"></i>
+                        {% else %}<i class="fa-solid fa-tags text-secondary me-2"></i>
+                        {% endif %}
+                        {{ cat_name }}
+                    </span>
+                    <span class="badge bg-primary rounded-pill">{{ stats.total }}</span>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+<!-- RECENT COMPLAINTS TABLE -->
+<div class="card dashboard-card mb-4">
+    <div class="card-header bg-primary text-white py-3">
+        <h5 class="m-0 fw-bold"><i class="fa-solid fa-list me-2"></i> Recent Complaints</h5>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Complaint Number</th>
+                    <th>Citizen Name</th>
+                    <th>Category</th>
+                    <th>Zone</th>
+                    <th>Ward</th>
+                    <th>Date</th>
+                    <th>Assigned Officer</th>
+                    <th>Status</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for complaint in recent_complaints %}
+                <tr>
+                    <td class="text-black fw-normal">{{ complaint.complaint_number }}</td>
+                    <td>{{ complaint.citizen_name }}</td>
+                    <td>{{ complaint.get_category_display }}</td>
+                    <td>{{ complaint.zone.name }}</td>
+                    <td>Ward {{ complaint.ward.number }}</td>
+                    <td>{{ complaint.created_at|date:"d-m-Y" }}</td>
+                    <td>{{ complaint.assigned_officer.name|default:"Unassigned" }}</td>
+                    <td>
+                        <span class="badge bg-{% if complaint.status.name == 'Submitted' %}warning text-dark{% elif complaint.status.name == 'Resolved' %}success{% else %}primary{% endif %}">
+                            {{ complaint.status.name }}
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <a href="{% url 'admin_complaint_detail' complaint.complaint_number %}" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-eye me-1"></i> View</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center py-4 text-muted">No complaints recorded yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+$(document).ready(function() {
+    // Animated Counters
+    $('.counter').each(function() {
+        let $this = $(this);
+        let countTo = parseInt($this.attr('data-target'));
+        $({ countNum: 0 }).animate({
+            countNum: countTo
+        }, {
+            duration: 1000,
+            easing: 'linear',
+            step: function() {
+                $this.text(Math.floor(this.countNum));
+            },
+            complete: function() {
+                $this.text(this.countNum);
+            }
+        });
+    });
+
+    // Parse chart data from Django context
+    let categoryData = JSON.parse('{{ category_chart|safe }}');
+    let wardData = JSON.parse('{{ ward_chart|safe }}');
+    let monthlyData = JSON.parse('{{ monthly_chart|safe }}');
+
+    // Monthly Trend Chart
+    new Chart(document.getElementById('monthlyTrendChart'), {
+        type: 'line',
+        data: {
+            labels: Object.keys(monthlyData),
+            datasets: [{
+                label: 'Complaints',
+                data: Object.values(monthlyData),
+                borderColor: '#1976D2',
+                backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                borderWidth: 3,
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } }
+        }
+    });
+
+
+});
+</script>
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Grievance Details | {{ complaint.complaint_number }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Receipt style block -->
+        <div class="card shadow-sm border-0 mb-4 overflow-hidden">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
+                <h5 class="m-0 fw-bold"><i class="fa-solid fa-file-shield me-2"></i> Complaint Details - {{ complaint.complaint_number }}</h5>
+                <span class="badge bg-warning text-dark px-3 py-2 fw-bold fs-6">{{ complaint.status.name }}</span>
+            </div>
+            
+            <div class="card-body p-5" id="printable-area">
+                <div class="text-center mb-4 d-none d-print-block">
+                    <h4>Namakkal City Municipal Corporation</h4>
+                    <h5>Public Grievance Redressal Receipt</h5>
+                    <hr>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td class="fw-bold text-primary" style="width: 40%;">Citizen Name:</td>
+                                <td>{{ complaint.citizen_name }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold text-primary">Mobile Number:</td>
+                                <td>{{ complaint.mobile_number }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold text-primary">Email:</td>
+                                <td>{{ complaint.email|default:"N/A" }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold text-primary">Full Address:</td>
+                                <td>{{ complaint.street_address }} - {{ complaint.pincode }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td class="fw-bold text-primary" style="width: 40%;">Date Registered:</td>
+                                <td>{{ complaint.created_at|date:"d-m-Y H:i" }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold text-primary">Category:</td>
+                                <td>{{ complaint.get_category_display }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold text-primary">Grievance Type:</td>
+                                <td>{{ complaint.complaint_type }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold text-primary">Assigned Officer:</td>
+                                <td>{{ complaint.assigned_officer.name|default:"Awaiting Assignment" }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="mb-4">
+                    <h6 class="fw-bold text-primary mb-2">Complaint Description:</h6>
+                    <p class="bg-light p-3 rounded" style="white-space: pre-wrap;">{{ complaint.description }}</p>
+                </div>
+
+                {% if complaint.latitude and complaint.longitude %}
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-primary mb-2">Geomapped Location:</h6>
+                        <div id="detail-map" style="height: 300px; border-radius: 8px;"></div>
+                    </div>
+                {% endif %}
+
+                <!-- Detailed Timeline -->
+                <div class="mb-4">
+                    <h6 class="fw-bold text-primary mb-3">Redressal History Log:</h6>
+                    <div class="timeline-list">
+                        {% for log in complaint.timeline.all %}
+                            <div class="timeline-item {% if forloop.last %}active{% endif %}">
+                                <span class="timeline-icon"></span>
+                                <div class="bg-light p-3 rounded ms-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <strong class="text-secondary">{{ log.status.name }}</strong>
+                                        <small class="text-muted">{{ log.changed_at|date:"d-m-Y H:i" }}</small>
+                                    </div>
+                                    <p class="m-0 text-dark">{{ log.remarks }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if complaint.resolution_remarks %}
+                    <div class="alert alert-success mt-4">
+                        <h5 class="fw-bold"><i class="fa-solid fa-circle-check me-2"></i> Resolution Statement</h5>
+                        <p class="mb-2"><strong>Remarks:</strong> {{ complaint.resolution_remarks }}</p>
+                        {% if complaint.resolution_image %}
+                            <div>
+                                <strong>Resolution Proof Image:</strong><br>
+                                <img src="{{ complaint.resolution_image.url }}" class="img-fluid rounded mt-2" style="max-height: 250px;">
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="card-footer bg-light p-3 d-flex justify-content-end gap-2">
+                <button onclick="window.print();" class="btn btn-primary"><i class="fa-solid fa-print me-1"></i> Print Receipt</button>
+                <a href="{% url 'check_status' %}" class="btn btn-outline-secondary">Back to Search</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if complaint.latitude and complaint.longitude %}
+<script>
+$(document).ready(function() {
+    let lat = parseFloat("{{ complaint.latitude }}");
+    let lng = parseFloat("{{ complaint.longitude }}");
+    
+    let map = L.map('detail-map').setView([lat, lng], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.marker([lat, lng]).addTo(map)
+        .bindPopup("Grievance Location")
+        .openPopup();
+});
+</script>
+{% endif %}
+{% endblock %}

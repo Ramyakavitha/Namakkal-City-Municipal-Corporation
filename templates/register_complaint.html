@@ -1,0 +1,598 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register Complaint | Namakkal PGR{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Mobile responsive tweaks (for 320px and small viewports) */
+    @media (max-width: 576px) {
+        .card-header {
+            padding: 12px 16px !important;
+            font-size: 1.05rem !important;
+        }
+        #dropzone {
+            padding: 1.25rem 1rem !important;
+        }
+        #dropzone-prompt h5 {
+            font-size: 1rem !important;
+            line-height: 1.4 !important;
+        }
+        #dropzone-prompt p {
+            font-size: 0.75rem !important;
+        }
+        /* Stacked buttons width and padding */
+        #dropzone-prompt .btn,
+        #sendOtpBtn {
+            width: 100% !important;
+            padding: 10px 16px !important;
+            font-size: 0.9rem !important;
+        }
+        .form-check-label {
+            font-size: 0.85rem !important;
+        }
+        h6.fw-bold {
+            font-size: 0.95rem !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10 col-12">
+        <div class="form-container py-3">
+            
+            <!-- Alert Instructions -->
+            <div class="alert alert-primary border-primary-subtle text-primary-emphasis mb-4 py-3" role="alert">
+                <i class="fa-solid fa-circle-info me-2"></i> <strong>Instructions:</strong> Fill in your details below and click "Submit Complaint". A unique <strong>Complaint Number</strong> will be generated — save it to track status. Fields marked <span class="text-danger">*</span> are mandatory.
+            </div>
+
+            <form method="post" enctype="multipart/form-data" id="complaintForm" class="needs-validation" novalidate>
+                {% csrf_token %}
+                
+                <!-- Section 1: Complaining Person's Details -->
+                <div class="card mb-4 border-primary-subtle shadow-sm">
+                    <div class="card-header bg-primary text-white fw-bold py-3 fs-5 trn" data-en="<i class='fa-solid fa-user-check me-2'></i> Complaining Person's Details" data-ta="<i class='fa-solid fa-user-check me-2'></i> புகாரளிப்பவர் விவரங்கள்">
+                        <i class="fa-solid fa-user-check me-2"></i> Complaining Person's Details
+                    </div>
+                    <div class="card-body p-3 p-sm-4 bg-white">
+                        <!-- Row 1: Mobile & Full Name side-by-side -->
+                        <div class="row g-3 mb-4" id="otpSection">
+                            <div class="col-md-6 col-12">
+                                <label class="form-label fw-bold text-primary trn" data-en="Mobile Number *" data-ta="கைபேசி எண் *" for="id_mobile_number">Mobile Number *</label>
+                                <div class="d-flex flex-column flex-sm-row gap-2">
+                                    <input type="text" name="mobile_number" id="id_mobile_number" class="form-control" placeholder="e.g. 9876543210" required pattern="[0-9]{10}">
+                                    <button type="button" class="btn btn-outline-primary px-3" id="sendOtpBtn" style="white-space: nowrap;">Send OTP</button>
+                                </div>
+                                <div class="form-text text-muted trn" data-en="10-digit mobile number" data-ta="10-இலக்க கைபேசி எண்">10-digit mobile number</div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <label class="form-label fw-bold text-primary trn" data-en="Full Name *" data-ta="முழு பெயர் *" for="id_citizen_name">Full Name *</label>
+                                {{ form.citizen_name }}
+                            </div>
+                        </div>
+
+                        <!-- Secondary Citizen Details (unlocked by default) -->
+                        <div id="grievanceDetailsSection">
+                            <div class="row g-3">
+                                <!-- Row 2: Gender dropdown -->
+                                <div class="col-md-6 col-12">
+                                    <label class="form-label fw-bold text-primary trn" data-en="Gender *" data-ta="பாலினம் *" for="id_gender">Gender</label>
+                                    {{ form.gender }}
+                                </div>
+                                <div class="col-md-6 d-none d-md-block"></div> <!-- Empty column for spacing -->
+
+                                <!-- Row 3: Street Address -->
+                                <div class="col-12">
+                                    <label class="form-label fw-bold text-primary trn" data-en="Street Address *" data-ta="தெரு முகவரி *" for="id_street_address">Street Address *</label>
+                                    {{ form.street_address }}
+                                </div>
+
+                                <!-- Row 4: PIN Code & Email side-by-side -->
+                                <div class="col-md-6 col-12">
+                                    <label class="form-label fw-bold text-primary trn" data-en="PIN Code *" data-ta="அஞ்சல் குறியீடு (பின்கோடு) *" for="id_pincode">PIN Code</label>
+                                    {{ form.pincode }}
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <label class="form-label fw-bold text-primary trn" data-en="Email Address (Optional)" data-ta="மின்னஞ்சல் முகவரி (விருப்பத்திற்குரியது)" for="id_email">Email Address</label>
+                                    {{ form.email }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Complaint Location -->
+                <div class="card mb-4 border-primary-subtle shadow-sm" id="locationCard">
+                    <div class="card-header bg-primary text-white fw-bold py-3 fs-5 trn" data-en="<i class='fa-solid fa-map-location-dot me-2'></i> Complaint Location" data-ta="<i class='fa-solid fa-map-location-dot me-2'></i> புகார் இருப்பிடம்">
+                        <i class="fa-solid fa-map-location-dot me-2"></i> Complaint Location
+                    </div>
+                    <div class="card-body p-3 p-sm-4 bg-white">
+                        <!-- Row 1: Zone & Ward -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6 col-12">
+                                <label class="form-label fw-bold text-primary trn" data-en="Zone *" data-ta="மண்டலம் *" for="id_zone">Zone *</label>
+                                <select name="zone" id="id_zone" class="form-select" required>
+                                    <option value="" class="trn" data-en="-- Choose Zone --" data-ta="-- மண்டலத்தைத் தேர்வு செய்க --">-- Choose Zone --</option>
+                                    {% for zone in zones %}
+                                        <option value="{{ zone.id }}">{{ zone.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <label class="form-label fw-bold text-primary trn" data-en="Ward Number *" data-ta="வார்டு எண் *" for="id_ward">Ward Number *</label>
+                                <select name="ward" id="id_ward" class="form-select" required disabled>
+                                    <option value="" class="trn" data-en="-- Choose Ward --" data-ta="-- வார்டைத் தேர்வு செய்க --">-- Choose Ward --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Area & Street -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6 col-12">
+                                <label class="form-label fw-bold text-primary trn" data-en="Area / Locality *" data-ta="பகுதி / இடம் *" for="id_area">Area / Locality *</label>
+                                <select name="area" id="id_area" class="form-select" required disabled>
+                                    <option value="" class="trn" data-en="-- Choose Area --" data-ta="-- பகுதியைத் தேர்வு செய்க --">-- Choose Area --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <label class="form-label fw-bold text-primary trn" data-en="Street Name & Landmark *" data-ta="தெரு பெயர் மற்றும் அடையாளம் *" for="id_street">Street Name & Landmark *</label>
+                                {{ form.street }}
+                            </div>
+                        </div>
+
+                        <!-- Row 3: OR Divider -->
+                        <div class="text-center my-3 d-flex align-items-center justify-content-center">
+                            <hr class="flex-grow-1 border-primary">
+                            <span class="badge bg-white text-primary rounded-circle p-3 fs-5 shadow-sm fw-bold border border-2 border-primary mx-3 trn" data-en="OR" data-ta="அல்லது">OR</span>
+                            <hr class="flex-grow-1 border-primary">
+                        </div>
+
+                        <!-- Row 4: Location Button & Status -->
+                        <div class="text-center mb-3">
+                            <button type="button" class="btn btn-primary px-4 py-2 trn" data-en="📍 Use My Current Location" data-ta="📍 தற்போதைய இருப்பிடம்" id="currentLocationBtn">📍 Use My Current Location</button>
+                            <div class="mt-2 text-muted small d-none" id="locationStatus">
+                            </div>
+                        </div>
+
+                        <!-- Row 5: Map -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="leaflet-map" class="border-primary-subtle" style="height: 350px; border-radius: 8px;"></div>
+                                {{ form.latitude }}
+                                {{ form.longitude }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Grievance Details -->
+                <div class="card mb-4 border-primary-subtle shadow-sm" id="grievanceCard">
+                    <div class="card-header bg-primary text-white fw-bold py-3 fs-5">
+                        <i class="fa-solid fa-circle-info me-2"></i> Grievance Details
+                    </div>
+                    <div class="card-body p-3 p-sm-4 bg-white">
+                        <div class="row g-3">
+                            <div class="col-md-6 col-12">
+                                <label class="form-label fw-bold text-primary" for="id_category">Complaint Category *</label>
+                                {{ form.category }}
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <label class="form-label fw-bold text-primary" for="id_complaint_type">Complaint Type (Sub-category) *</label>
+                                {{ form.complaint_type }}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold text-primary" for="id_social_media_link">Social Media Link (Optional)</label>
+                                {{ form.social_media_link }}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold text-primary" for="id_description">Complaint Description *</label>
+                                {{ form.description }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Upload Photograph / Video * -->
+                <div class="card mb-4 border-0 shadow-sm" id="filesCard">
+                    <div class="card-body p-3 p-sm-4 bg-white">
+                        <h5 class="fw-bold text-primary mb-3 trn" data-en="<i class='fa-solid fa-paperclip me-2'></i> 4. Upload Photograph / Video *" data-ta="<i class='fa-solid fa-paperclip me-2'></i> 4. புகைப்படம் / வீடியோ பதிவேற்றம் *"><i class="fa-solid fa-paperclip me-2"></i> 4. Upload Photograph / Video *</h5>
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div id="dropzone" class="border border-2 border-dashed border-primary rounded-3 p-3 p-sm-4 text-center bg-light position-relative" style="border-color: #1e4a8a !important;">
+                                    <!-- Hidden default inputs -->
+                                    <div class="d-none">
+                                        {{ form.image }}
+                                        {{ form.video_upload }}
+                                    </div>
+                                    <div id="dropzone-prompt" class="py-3">
+                                        <i class="fa-solid fa-cloud-arrow-up fa-3x text-primary mb-3"></i>
+                                        <h5 class="fw-bold text-dark mb-3 trn" data-en="Click below to add photograph or video *" data-ta="புகைப்படம் அல்லது வீடியோவைச் சேர்க்க கீழே கிளிக் செய்யவும் *">Click below to add photograph or video *</h5>
+                                        <div class="d-flex flex-column flex-sm-row justify-content-center gap-2">
+                                            <button type="button" class="btn btn-primary px-4 py-2.5 fw-bold" id="uploadPhotoBtn" style="background-color: #1e4a8a; border-color: #1e4a8a;">
+                                                <i class="fa-solid fa-camera me-2"></i> Photograph
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary px-4 py-2.5 fw-bold" id="uploadVideoBtn" style="border-color: #1e4a8a; color: #1e4a8a;">
+                                                <i class="fa-solid fa-video me-2"></i> Video
+                                            </button>
+                                        </div>
+                                        <p class="text-muted small mt-3 mb-0 trn" data-en="(JPG, PNG, MP4 — max 5 MB each)" data-ta="(JPG, PNG, MP4 — தலா அதிகபட்சம் 5 MB)">(JPG, PNG, MP4 — max 5 MB each)</p>
+                                    </div>
+                                    <div id="dropzone-previews" class="row g-3 justify-content-center d-none">
+                                        <!-- File previews go here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Verification & Submit -->
+                        <div class="mt-4 pt-4 border-top">
+                            <!-- Declaration Checkbox -->
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" name="declaration" id="id_declaration" required>
+                                <label class="form-check-label fw-bold text-primary" for="id_declaration">
+                                    I hereby declare that the above information is true to the best of my knowledge. *
+                                </label>
+                            </div>
+                            
+                            <!-- Security Check Header -->
+                            <h6 class="fw-bold text-primary mb-3">Security Check *</h6>
+                            
+                            <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-2 mb-4">
+                                <div class="d-flex align-items-center gap-2">
+                                    <!-- Captcha Box (White bg, blue border, blue text) -->
+                                    <div class="bg-white border border-primary text-primary px-4 py-2 fs-5 fw-bold tracking-widest rounded user-select-none" style="border-width: 2px !important; min-width: 120px; text-align: center; border-color: #1e4a8a !important;">
+                                        {{ captcha_code }}
+                                    </div>
+                                    <!-- Refresh Button -->
+                                    <button type="button" class="btn btn-outline-primary px-3 py-2" onclick="location.reload();" style="border-color: #1e4a8a !important; height: 42px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fa-solid fa-arrows-rotate"></i>
+                                    </button>
+                                </div>
+                                <!-- Input box with placeholder -->
+                                <div style="max-width: 172px; width: 100%;">
+                                    <input type="text" name="captcha" id="id_captcha" class="form-control text-uppercase" placeholder="TYPE ABOVE" required style="height: 42px;">
+                                </div>
+                            </div>
+                            
+                            <!-- Buttons row (aligned right) -->
+                            <div class="d-flex justify-content-end gap-3 mt-4">
+                                <button type="reset" class="btn btn-outline-primary px-4 py-2 fw-bold" id="resetBtn" onclick="location.reload();" style="border-color: #1e4a8a !important; color: #1e4a8a !important;">Clear Form</button>
+                                <button type="submit" class="btn btn-primary px-4 py-2 fw-bold" id="submitBtn" style="background-color: #1e4a8a; border-color: #1e4a8a;">Submit Complaint</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    let map, marker;
+    let initialLat = 11.2189; // Namakkal center Lat
+    let initialLng = 78.1674; // Namakkal center Lng
+    let otpVerified = false;
+
+    // Initialize Map on loading verified section or placeholder
+    function initMap(lat, lng) {
+        if (map) return;
+        map = L.map('leaflet-map').setView([lat, lng], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        marker = L.marker([lat, lng], {draggable: true}).addTo(map);
+        updateLatLngFields(lat, lng);
+
+        marker.on('dragend', function(e) {
+            let position = marker.getLatLng();
+            updateLatLngFields(position.lat, position.lng);
+        });
+
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+            updateLatLngFields(e.latlng.lat, e.latlng.lng);
+        });
+    }
+
+    function updateLatLngFields(lat, lng) {
+        $('#id_latitude').val(lat.toFixed(7));
+        $('#id_longitude').val(lng.toFixed(7));
+        $('#locationStatus').html('');
+    }
+
+    // Input validation constraints
+    $('#id_mobile_number').attr('maxlength', '10').on('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+    $('#id_citizen_name').attr('maxlength', '30').on('input', function() {
+        this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
+    });
+
+    $('#id_street_address').attr('maxlength', '200');
+
+    $('#id_pincode').attr('maxlength', '6').on('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+    // Initialize Map on page load
+    initMap(initialLat, initialLng);
+
+    // OTP Sending Flow
+    $('#sendOtpBtn').click(function() {
+        let mobile = $('#id_mobile_number').val().trim();
+        if (mobile.length !== 10) {
+            Swal.fire('Error', 'Please enter a valid 10-digit mobile number.', 'error');
+            return;
+        }
+
+        // Disable button & send request
+        let btn = $(this);
+        btn.prop('disabled', true).html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i> Sending...');
+
+        $.post("{% url 'send_otp' %}", {
+            mobile_number: mobile,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }, function(response) {
+            // Prompt OTP Modal
+            Swal.fire({
+                title: 'Enter Verification Code',
+                text: response.message, // Shows code inside message for simulation convenience
+                input: 'text',
+                inputAttributes: {
+                    maxlength: 6,
+                    autocapitalize: 'off',
+                    autocorrect: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Verify OTP',
+                showLoaderOnConfirm: true,
+                preConfirm: (code) => {
+                    return $.post("{% url 'verify_otp' %}", {
+                        mobile_number: mobile,
+                        otp_code: code,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    }).catch(error => {
+                        Swal.showValidationMessage(`Error: ${error.responseJSON.message}`);
+                    });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed && result.value.status === 'success') {
+                    Swal.fire('Success', 'Mobile number verified successfully!', 'success');
+                    otpVerified = true;
+                    // Enable Form
+                    $('#id_mobile_number').prop('readonly', true);
+                    $('#otpSection').addClass('bg-success bg-opacity-10 border border-success rounded p-3');
+                    $('#sendOtpBtn').remove();
+                    
+                    // Unlock sections
+                    $('#grievanceDetailsSection').removeClass('opacity-50').css('pointer-events', 'auto');
+                    $('#locationCard').removeClass('pointer-events-none').css('opacity', '1');
+                    $('#grievanceCard').removeClass('pointer-events-none').css('opacity', '1');
+                    $('#filesCard').removeClass('pointer-events-none').css('opacity', '1');
+                    
+                    // Init Map
+                    setTimeout(function() {
+                        initMap(initialLat, initialLng);
+                    }, 200);
+                } else {
+                    btn.prop('disabled', false).html('Send OTP');
+                }
+            });
+        }).fail(function(xhr) {
+            Swal.fire('Error', xhr.responseJSON.message, 'error');
+            btn.prop('disabled', false).html('Send OTP');
+        });
+    });
+
+    // Dynamic Zone/Ward/Area change triggers
+    $('#id_zone').change(function() {
+        let zoneId = $(this).val();
+        let wardSelect = $('#id_ward');
+        let areaSelect = $('#id_area');
+        
+        wardSelect.empty().append('<option value="">-- Choose Ward --</option>').prop('disabled', true);
+        areaSelect.empty().append('<option value="">-- Choose Area --</option>').prop('disabled', true);
+
+        if (zoneId) {
+            $.get("{% url 'get_wards_areas' %}", { zone_id: zoneId }, function(data) {
+                if (data.wards.length > 0) {
+                    $.each(data.wards, function(idx, ward) {
+                        wardSelect.append(`<option value="${ward.id}">Ward ${ward.number} (${ward.name})</option>`);
+                    });
+                    wardSelect.prop('disabled', false);
+                }
+            });
+        }
+    });
+
+    $('#id_ward').change(function() {
+        let wardId = $(this).val();
+        let areaSelect = $('#id_area');
+        
+        areaSelect.empty().append('<option value="">-- Choose Area --</option>').prop('disabled', true);
+
+        if (wardId) {
+            $.get("{% url 'get_wards_areas' %}", { ward_id: wardId }, function(data) {
+                if (data.areas.length > 0) {
+                    $.each(data.areas, function(idx, area) {
+                        areaSelect.append(`<option value="${area.id}">${area.name}</option>`);
+                    });
+                    areaSelect.prop('disabled', false);
+                }
+            });
+        }
+    });
+
+    // Current Location trigger
+    $('#currentLocationBtn').click(function() {
+        if (!navigator.geolocation) {
+            Swal.fire('Warning', 'Geolocation is not supported by your browser.', 'warning');
+            return;
+        }
+
+        $(this).html('<i class="fa-solid fa-circle-notch fa-spin me-1"></i> Fetching...');
+        navigator.geolocation.getCurrentPosition(function(position) {
+            let lat = position.coords.latitude;
+            let lng = position.coords.longitude;
+            marker.setLatLng([lat, lng]);
+            map.setView([lat, lng], 15);
+            updateLatLngFields(lat, lng);
+            $('#currentLocationBtn').html('📍 Use My Current Location');
+        }, function(error) {
+            Swal.fire('Error', 'Unable to fetch current location.', 'error');
+            $('#currentLocationBtn').html('📍 Use My Current Location');
+        });
+    });
+
+
+
+    // Drag & Drop / File Upload logic
+    const dropzone = $('#dropzone');
+    const originalPromptHtml = $('#dropzone-prompt').html();
+
+    $('#uploadPhotoBtn').click(function(e) {
+        e.stopPropagation();
+        $('#id_image').click();
+    });
+
+    $('#uploadVideoBtn').click(function(e) {
+        e.stopPropagation();
+        $('#id_video_upload').click();
+    });
+
+    $('#id_image').change(function() {
+        if (this.files.length > 0) {
+            handleFiles(this.files, 'image');
+        }
+    });
+
+    $('#id_video_upload').change(function() {
+        if (this.files.length > 0) {
+            handleFiles(this.files, 'video');
+        }
+    });
+
+    dropzone.on('dragover', function(e) {
+        e.preventDefault();
+        dropzone.addClass('bg-amber-soft');
+    });
+
+    dropzone.on('dragleave drop', function(e) {
+        e.preventDefault();
+        dropzone.removeClass('bg-amber-soft');
+    });
+
+    dropzone.on('drop', function(e) {
+        let files = e.originalEvent.dataTransfer.files;
+        handleFiles(files);
+    });
+
+    function handleFiles(files, forcedType = null) {
+        if (files.length === 0) return;
+        
+        let previewsHtml = '';
+        let isImageUploaded = false;
+        let imageUrl = '';
+
+        for (let file of files) {
+            // Check size (5MB limit)
+            if (file.size > 5 * 1024 * 1024) {
+                Swal.fire('Error', `${file.name} exceeds the 5MB size limit.`, 'error');
+                continue;
+            }
+
+            let fileType = forcedType || (file.type.startsWith('image/') ? 'image' : (file.type.startsWith('video/') ? 'video' : ''));
+
+            if (fileType === 'image') {
+                imageUrl = URL.createObjectURL(file);
+                isImageUploaded = true;
+                if (!forcedType) {
+                    let dt = new DataTransfer();
+                    dt.items.add(file);
+                    document.getElementById('id_image').files = dt.files;
+                }
+            } else if (fileType === 'video') {
+                let fileUrl = URL.createObjectURL(file);
+                if (!forcedType) {
+                    let dt = new DataTransfer();
+                    dt.items.add(file);
+                    document.getElementById('id_video_upload').files = dt.files;
+                }
+                previewsHtml += `
+                    <div class="col-md-4 col-sm-6 col-12">
+                        <div class="card p-3 border-amber-soft text-center bg-white">
+                            <div class="mb-2">
+                                <video src="${fileUrl}" class="img-fluid rounded mb-2" style="max-height: 100px; object-fit: cover; border: 1px solid #e2e8f0;" controls></video>
+                            </div>
+                            <div class="text-truncate small fw-bold">${file.name}</div>
+                            <div class="small text-muted">${(file.size / (1024 * 1024)).toFixed(2)} MB</div>
+                        </div>
+                    </div>`;
+            } else {
+                Swal.fire('Warning', `${file.name} is not a supported format. Please upload JPG, PNG, or MP4.`, 'warning');
+            }
+        }
+
+        if (isImageUploaded && imageUrl) {
+            // Full cover premium preview of the image directly inside the dropzone
+            dropzone.css({
+                'background-image': `url(${imageUrl})`,
+                'background-size': 'cover',
+                'background-position': 'center',
+                'background-repeat': 'no-repeat',
+                'min-height': '240px'
+            });
+            $('#dropzone-prompt').html(`
+                <div class="py-2 px-3 rounded shadow" style="background: rgba(30, 74, 138, 0.85); color: #ffffff; display: inline-block; font-weight: bold; border: 1px solid rgba(255,255,255,0.2);">
+                    <i class="fa-solid fa-arrows-rotate me-2"></i> Click or drop to replace photo
+                </div>
+            `).removeClass('d-none');
+            $('#dropzone-previews').addClass('d-none');
+            
+            // Allow cover click to trigger file upload selection
+            dropzone.off('click').on('click', function(e) {
+                if ($(e.target).closest('#dropzone-previews').length === 0) {
+                    $('#id_image').click();
+                }
+            });
+        } else if (previewsHtml !== '') {
+            // Restore regular prompt and previews container for videos
+            dropzone.css({
+                'background-image': 'none',
+                'min-height': 'auto'
+            });
+            $('#dropzone-prompt').html(originalPromptHtml).addClass('d-none');
+            $('#dropzone-previews').html(previewsHtml).removeClass('d-none');
+        }
+    }
+
+    // Form Submission Validation
+    $('#complaintForm').submit(function(e) {
+        if (!otpVerified) {
+            e.preventDefault();
+            Swal.fire('Mobile Verification Required', 'Please send and verify the OTP for your mobile number first.', 'warning');
+            return false;
+        }
+
+        let imageInput = document.getElementById('id_image');
+        let videoInput = document.getElementById('id_video_upload');
+        let hasImage = imageInput && imageInput.files && imageInput.files.length > 0;
+        let hasVideo = videoInput && videoInput.files && videoInput.files.length > 0;
+
+        if (!hasImage && !hasVideo) {
+            e.preventDefault();
+            Swal.fire('Attachment Required', 'Please upload a supporting photograph or video *', 'error');
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %}
