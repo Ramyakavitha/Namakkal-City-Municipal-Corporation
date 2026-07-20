@@ -1,1 +1,1 @@
-web: gunicorn namakkal_pgr.wsgi
+web: python manage.py migrate && gunicorn namakkal_pgr.wsgi
